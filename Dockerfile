@@ -1,5 +1,5 @@
 # ---- Build Stage ----
-FROM python:3.12-slim AS base
+FROM registry.redhat.io/ubi8/python-312 AS base
 
 WORKDIR /app
 
