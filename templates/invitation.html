@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{ config.groom_name }} & {{ config.bride_name }} · 婚礼邀请函</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/invitation.css') }}">
+</head>
+<body>
+    <!-- Landing Overlay – 点击后开始播放音乐 -->
+    <div id="landing-overlay" class="landing-overlay">
+        <div class="landing-content">
+            <p class="landing-subtitle">{{ config.groom_name }} & {{ config.bride_name }}</p>
+            <p class="landing-date">{{ config.wedding_date }}</p>
+            <button id="open-btn" class="landing-btn">打开邀请函</button>
+        </div>
+    </div>
+
+    <!-- Floating Petals Background -->
+    <div class="petals-container" id="petals-container"></div>
+
+    <!-- Music Control -->
+    <button id="music-btn" class="music-btn" aria-label="播放/暂停音乐">
+        <svg class="music-icon playing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+        </svg>
+        <svg class="music-icon paused" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none;">
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+        </svg>
+    </button>
+    <audio id="bgm" loop preload="auto">
+        <source src="/music/{{ config.bgm_filename }}" type="audio/ogg">
+    </audio>
+
+    <!-- ===== Section 1: Cover (Photo at top) ===== -->
+    <section class="section section-cover" id="cover">
+        <div class="cover-photo-wrap">
+            <img src="/photo/{{ config.cover_photo }}" alt="Wedding Photo" class="cover-photo" onerror="this.parentElement.style.display='none'">
+            <div class="cover-photo-overlay"></div>
+        </div>
+        <div class="cover-overlay"></div>
+        <div class="cover-content fade-in">
+            <div class="sparkle-line">
+                <span class="sparkle">✦</span>
+                <span class="sparkle-dash"></span>
+                <span class="sparkle">✦</span>
+            </div>
+            <p class="cover-subtitle">{{ config.cover_subtitle }}</p>
+            <div class="cover-names">
+                <span class="name groom">{{ config.groom_name }}</span>
+                <span class="ampersand">&</span>
+                <span class="name bride">{{ config.bride_name }}</span>
+            </div>
+            <p class="cover-date">{{ config.wedding_date }}</p>
+            <div class="sparkle-line">
+                <span class="sparkle">✦</span>
+                <span class="sparkle-dash"></span>
+                <span class="sparkle">✦</span>
+            </div>
+            <div class="scroll-hint">
+                <span>向上滑动</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                    <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Section 2: Invitation + Details (合并在一页) ===== -->
+    <section class="section section-invite" id="invite">
+        <div class="section-inner fade-in">
+            <div class="ornament-line">
+                <span class="ornament-dot"></span>
+                <span class="ornament-text">✦</span>
+                <span class="ornament-dot"></span>
+            </div>
+            <h2 class="section-title">{{ config.invite_title }}</h2>
+            {% if guest_name %}
+            <div class="guest-card">
+                <div class="guest-card-border"></div>
+                <p class="songcheng">送呈</p>
+                <p class="guest-name">{{ guest_name }}</p>
+                <p class="taiqi">台启</p>
+            </div>
+            {% endif %}
+            <div class="invite-body">
+                {% for line in config.invite_text_rendered.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+
+            {% if invite_ceremony %}
+            <div class="ceremony-invite">
+                <div class="ceremony-divider">
+                    <span class="divider-leaf">🌿</span>
+                </div>
+                {% for line in config.ceremony_invite_text.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+                <p class="ceremony-time-highlight">草坪仪式 · {{ config.ceremony_time }}</p>
+            </div>
+            {% endif %}
+
+            <!-- 婚礼详情 (内嵌在邀请页) -->
+            <div class="inline-details">
+                <div class="ornament-line">
+                    <span class="ornament-dot"></span>
+                    <span class="ornament-text">✦</span>
+                    <span class="ornament-dot"></span>
+                </div>
+                <h3 class="inline-details-title">{{ config.details_title }}</h3>
+                <div class="details-grid">
+                    {% if invite_ceremony %}
+                    <div class="detail-card detail-card-glow">
+                        <div class="detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <h3>{{ config.ceremony_label }}</h3>
+                        <p class="detail-value">{{ config.ceremony_time }}</p>
+                    </div>
+                    {% endif %}
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <h3>{{ config.banquet_label }}</h3>
+                        <p class="detail-value">{{ config.banquet_time }}</p>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3>{{ config.venue_label }}</h3>
+                        <p class="detail-value">{{ config.wedding_venue }}</p>
+                        {% if config.wedding_address %}
+                        <p class="detail-address">{{ config.wedding_address }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="invite-sign">
+                <p>{{ config.groom_name }} & {{ config.bride_name }}</p>
+                <p>敬邀</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Section 3: Our Story + Closing ===== -->
+    <section class="section section-closing" id="closing">
+        <div class="section-inner fade-in">
+            <div class="ornament-line">
+                <span class="ornament-dot"></span>
+                <span class="ornament-text">✦</span>
+                <span class="ornament-dot"></span>
+            </div>
+            <h2 class="section-title">{{ config.story_title }}</h2>
+            <div class="story-text">
+                {% for line in config.story_text.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+            <div class="closing-divider">
+                <span class="sparkle">✦</span>
+            </div>
+            <div class="closing-text">
+                {% for line in config.closing_text.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+            <div class="closing-names">
+                <span>{{ config.groom_name }}</span>
+                <span class="heart">♥</span>
+                <span>{{ config.bride_name }}</span>
+            </div>
+            <p class="footer-text">{{ config.footer_text }}</p>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/invitation.js') }}"></script>
+</body>
+</html>

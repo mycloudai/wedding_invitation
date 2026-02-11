@@ -1,0 +1,28 @@
+# docker-compose.dev.yml  –  本地调试用覆盖文件
+# 使用方法:  docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+# 或使用别名:  uc  (alias uc='docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build')
+#
+# 特性:
+#   - 挂载本地源码，修改后容器内即时生效
+#   - 使用 Flask 开发服务器（热重载）
+#   - 端口映射到 5050（避免 macOS AirPlay 占用 5000）
+#   - 使用本地 ./data 目录持久化数据
+
+services:
+  wedding:
+    # 覆盖生产 CMD，改用 Flask 开发服务器（热重载）
+    command: ["python", "server/app.py"]
+    ports:
+      - "5050:5050"
+    volumes:
+      # 挂载本地源码实现热重载
+      - ./server:/app/server
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./music:/app/music
+      - ./photo:/app/photo
+      # 持久化数据使用本地目录
+      - ./data:/app/data
+    environment:
+      - PORT=5050
+      - FLASK_DEBUG=1

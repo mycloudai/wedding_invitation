@@ -1,0 +1,401 @@
+/* ==========================================================================
+   Admin Panel Styles
+   ========================================================================== */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: #faf8f5;
+    --color-text: #3d3632;
+    --color-text-light: #7a706a;
+    --color-accent: #c0956e;
+    --color-accent-hover: #a87d5a;
+    --color-danger: #c0392b;
+    --color-danger-hover: #a33225;
+    --color-border: #e8e2da;
+    --color-card: #ffffff;
+    --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+    --radius: 10px;
+}
+
+body {
+    font-family: var(--font-serif);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Login Page ---------- */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.login-card {
+    background: var(--color-card);
+    border-radius: var(--radius);
+    padding: 48px 36px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+}
+
+.login-card h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+}
+
+.login-subtitle {
+    font-size: 13px;
+    color: var(--color-text-light);
+    letter-spacing: 3px;
+    margin-bottom: 32px;
+}
+
+/* ---------- Forms ---------- */
+.form-group {
+    margin-bottom: 16px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus {
+    border-color: var(--color-accent);
+}
+
+.error {
+    color: var(--color-danger);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    letter-spacing: 2px;
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--color-accent-hover);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.btn-outline:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.btn-text {
+    background: none;
+    color: var(--color-text-light);
+    padding: 10px 12px;
+}
+
+.btn-text:hover {
+    color: var(--color-accent);
+}
+
+.btn-danger {
+    background: transparent;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+}
+
+.btn-danger:hover {
+    background: var(--color-danger);
+    color: #fff;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* ---------- Admin Layout ---------- */
+.admin-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.admin-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 4px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ---------- Cards ---------- */
+.card {
+    background: var(--color-card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.card h2 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: var(--color-text-light);
+    margin-bottom: 20px;
+}
+
+.count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* ---------- Add Guest Form ---------- */
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.input-row input {
+    flex: 1;
+}
+
+/* ---------- Result Area ---------- */
+.result-area {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--color-bg);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.result-label {
+    font-size: 13px;
+    color: var(--color-text-light);
+    margin-bottom: 8px;
+}
+
+.result-url-row {
+    display: flex;
+    gap: 8px;
+}
+
+.result-url-row input {
+    flex: 1;
+    font-size: 13px;
+}
+
+.result-url-row textarea {
+    flex: 1;
+    font-size: 13px;
+    font-family: var(--font-serif);
+    resize: vertical;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-card);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* ---------- Guest Table ---------- */
+.guest-table-wrapper {
+    overflow-x: auto;
+}
+
+.guest-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.guest-table th {
+    text-align: left;
+    font-weight: 400;
+    color: var(--color-text-light);
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--color-border);
+    letter-spacing: 2px;
+    font-size: 12px;
+}
+
+.guest-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.td-name {
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.td-url a {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.td-url a:hover {
+    text-decoration: underline;
+}
+
+.td-actions {
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.empty-msg {
+    text-align: center;
+    color: var(--color-text-light);
+    font-size: 14px;
+    padding: 40px 0;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--color-text);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+    .td-actions {
+        flex-direction: column;
+    }
+}
+
+/* ---------- Checkbox ---------- */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
+/* ---------- Badge ---------- */
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.badge-yes {
+    background: rgba(192, 149, 110, 0.12);
+    color: var(--color-accent);
+    border: 1px solid rgba(192, 149, 110, 0.3);
+}
+
+.badge-no {
+    background: rgba(0,0,0,0.04);
+    color: var(--color-text-light);
+}

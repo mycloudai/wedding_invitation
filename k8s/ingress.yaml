@@ -1,0 +1,33 @@
+# ==========================================================================
+# K8s Ingress – 婚礼邀请函
+# 需要集群已安装 Ingress Controller (如 nginx-ingress / traefik)
+# ==========================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wedding-invitation
+  labels:
+    app: wedding-invitation
+  annotations:
+    # ---- Nginx Ingress 示例 ----
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # 如使用 cert-manager 自动签发 TLS：
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx      # 根据实际 Ingress Controller 修改
+  tls:
+    - hosts:
+        - wedding.example.com   # 替换为你的域名
+      secretName: wedding-tls   # TLS 证书 Secret 名
+  rules:
+    - host: wedding.example.com # 替换为你的域名
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wedding-invitation
+                port:
+                  number: 80

@@ -1,0 +1,64 @@
+# ==========================================================================
+# K8s Deployment – 婚礼邀请函
+# ==========================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wedding-invitation
+  labels:
+    app: wedding-invitation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wedding-invitation
+  template:
+    metadata:
+      labels:
+        app: wedding-invitation
+    spec:
+      containers:
+        - name: wedding
+          image: wedding-invitation:latest   # 替换为你的镜像地址
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: wedding-config
+            - secretRef:
+                name: wedding-secret
+          env:
+            - name: DATA_DIR
+              value: "/app/data"
+            - name: MUSIC_DIR
+              value: "/app/data/music"
+            - name: PHOTO_DIR
+              value: "/app/data/photo"
+          volumeMounts:
+            - name: wedding-data
+              mountPath: /app/data
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: wedding-data
+          persistentVolumeClaim:
+            claimName: wedding-data-pvc

@@ -1,0 +1,775 @@
+/* ==========================================================================
+   Wedding Invitation – Minimalist Style with Elegant Effects
+   Mobile-first · Elegant · Romantic
+   ========================================================================== */
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: #faf8f5;
+    --color-bg-alt: #f3efe9;
+    --color-text: #3d3632;
+    --color-text-light: #7a706a;
+    --color-accent: #c0956e;
+    --color-accent-light: #ddc5a8;
+    --color-gold: #b8944f;
+    --color-white: #ffffff;
+    --color-card-bg: rgba(255, 255, 255, 0.75);
+    --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+    --font-western: 'Cormorant Garamond', 'Georgia', serif;
+    --section-padding: 80px 24px;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-serif);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: 1.8;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Landing Overlay ---------- */
+.landing-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(
+        135deg,
+        var(--color-bg) 0%,
+        var(--color-bg-alt) 50%,
+        rgba(192, 149, 110, 0.12) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease;
+}
+
+.landing-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.landing-content {
+    text-align: center;
+    animation: landing-appear 1s ease-out;
+}
+
+@keyframes landing-appear {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.landing-subtitle {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: var(--color-text);
+    margin-bottom: 12px;
+}
+
+.landing-date {
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: var(--color-text-light);
+    margin-bottom: 48px;
+}
+
+.landing-btn {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 6px;
+    color: var(--color-accent);
+    background: transparent;
+    border: 1px solid var(--color-accent-light);
+    border-radius: 30px;
+    padding: 14px 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: btn-glow 2.5s ease-in-out infinite;
+}
+
+.landing-btn:hover {
+    background: var(--color-accent);
+    color: var(--color-white);
+    border-color: var(--color-accent);
+}
+
+@keyframes btn-glow {
+    0%, 100% { box-shadow: 0 0 0 transparent; }
+    50% { box-shadow: 0 0 20px rgba(192, 149, 110, 0.15); }
+}
+
+/* ---------- Floating Petals ---------- */
+.petals-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.petal {
+    position: absolute;
+    top: -40px;
+    opacity: 0;
+    pointer-events: none;
+    animation: petalFall linear forwards;
+}
+
+.petal svg {
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes petalFall {
+    0% {
+        opacity: 0;
+        transform: translateY(0) rotate(0deg) scale(0.8);
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(360deg) scale(0.6);
+    }
+}
+
+/* ---------- Floating Hearts ---------- */
+.heart {
+    position: absolute;
+    top: -40px;
+    opacity: 0;
+    pointer-events: none;
+    font-size: 16px;
+    color: var(--color-accent);
+    animation: heartFloat linear forwards;
+}
+
+@keyframes heartFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.3) rotate(0deg);
+    }
+    15% {
+        opacity: 0.8;
+    }
+    85% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0.8) rotate(20deg);
+    }
+}
+
+/* ---------- Sparkle Particles ---------- */
+.sparkle-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--color-accent-light);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkleRise linear forwards;
+}
+
+@keyframes sparkleRise {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.5);
+    }
+}
+
+/* ---------- Music Button ---------- */
+.music-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    color: var(--color-accent);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.music-btn:hover {
+    transform: scale(1.1);
+}
+
+.music-btn.is-playing {
+    animation: music-spin 3s linear infinite;
+}
+
+@keyframes music-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.music-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* ---------- Sections ---------- */
+.section {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.section-inner {
+    width: 100%;
+    max-width: 480px;
+    padding: var(--section-padding);
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* ---------- Fade-in Animation ---------- */
+.fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- Ornament Line ---------- */
+.ornament-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.ornament-dot {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-accent-light), transparent);
+}
+
+.ornament-text {
+    color: var(--color-accent);
+    font-size: 12px;
+    letter-spacing: 2px;
+    animation: ornament-glow 3s ease-in-out infinite;
+}
+
+@keyframes ornament-glow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* ---------- Sparkle Line ---------- */
+.sparkle-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.sparkle {
+    color: var(--color-accent-light);
+    font-size: 10px;
+    animation: sparkle-twinkle 2s ease-in-out infinite;
+}
+
+.sparkle:last-child {
+    animation-delay: 0.5s;
+}
+
+.sparkle-dash {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-accent-light), transparent);
+}
+
+@keyframes sparkle-twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 6px;
+    color: var(--color-text);
+    margin-bottom: 32px;
+}
+
+/* ==========================================================================
+   SECTION 1 – Cover
+   ========================================================================== */
+.section-cover {
+    background: linear-gradient(
+        to bottom,
+        rgba(192, 149, 110, 0.08) 0%,
+        var(--color-bg) 100%
+    );
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Cover Photo */
+.cover-photo-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cover-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: brightness(0.85) saturate(0.9);
+    animation: cover-zoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes cover-zoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); }
+}
+
+.cover-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(250, 248, 245, 0.3) 0%,
+        rgba(250, 248, 245, 0.5) 40%,
+        rgba(250, 248, 245, 0.85) 100%
+    );
+}
+
+.cover-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(192, 149, 110, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(192, 149, 110, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.cover-content {
+    position: relative;
+    text-align: center;
+    padding: 60px 24px;
+    z-index: 2;
+    animation: cover-glow 4s ease-in-out infinite;
+}
+
+@keyframes cover-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(192, 149, 110, 0.15));
+    }
+}
+
+.cover-subtitle {
+    font-family: var(--font-western);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: text-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes text-shimmer {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+.cover-names {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.cover-names .name {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: 8px;
+    color: var(--color-text);
+    text-shadow: 0 2px 20px rgba(192, 149, 110, 0.15);
+}
+
+.cover-names .ampersand {
+    font-family: var(--font-western);
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--color-accent);
+    animation: amp-pulse 3s ease-in-out infinite;
+}
+
+@keyframes amp-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+.cover-date {
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: var(--color-text-light);
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-accent-light);
+    font-size: 11px;
+    letter-spacing: 3px;
+    animation: hint-bounce 2s ease-in-out infinite;
+}
+
+@keyframes hint-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+    50% { transform: translateX(-50%) translateY(8px); opacity: 1; }
+}
+
+/* ==========================================================================
+   SECTION 2 – Invitation
+   ========================================================================== */
+.section-invite {
+    background-color: var(--color-bg-alt);
+    min-height: auto;
+    padding: 60px 0;
+}
+
+.guest-card {
+    margin: 0 auto 36px;
+    padding: 28px 20px;
+    background: var(--color-card-bg);
+    border-radius: 12px;
+    border: 1px solid rgba(192, 149, 110, 0.2);
+    max-width: 280px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(192, 149, 110, 0.08);
+    animation: card-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes card-shimmer {
+    0%, 100% {
+        box-shadow: 0 4px 24px rgba(192, 149, 110, 0.08);
+    }
+    50% {
+        box-shadow: 0 8px 32px rgba(192, 149, 110, 0.18), 0 0 40px rgba(192, 149, 110, 0.1);
+    }
+}
+
+.guest-card-border {
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(192, 149, 110, 0.12);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.songcheng, .taiqi {
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: var(--color-text-light);
+}
+
+.guest-name {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: var(--color-accent);
+    margin: 12px 0;
+    animation: name-glow 3s ease-in-out infinite;
+}
+
+@keyframes name-glow {
+    0%, 100% { text-shadow: 0 0 0 transparent; }
+    50% { text-shadow: 0 0 20px rgba(192, 149, 110, 0.2); }
+}
+
+.invite-body p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 2.2;
+    color: var(--color-text);
+    letter-spacing: 2px;
+}
+
+/* ---------- Ceremony Invitation ---------- */
+.ceremony-invite {
+    margin-top: 32px;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, rgba(192, 149, 110, 0.06), rgba(192, 149, 110, 0.02));
+    border-radius: 12px;
+    border: 1px solid rgba(192, 149, 110, 0.15);
+}
+
+.ceremony-divider {
+    margin-bottom: 16px;
+}
+
+.divider-leaf {
+    font-size: 20px;
+    animation: leaf-sway 3s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes leaf-sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+.ceremony-invite p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 2;
+    letter-spacing: 2px;
+    color: var(--color-text);
+}
+
+.ceremony-time-highlight {
+    margin-top: 12px;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--color-accent) !important;
+    letter-spacing: 3px !important;
+}
+
+.invite-sign {
+    margin-top: 40px;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--color-text-light);
+}
+
+.invite-sign p + p {
+    margin-top: 4px;
+}
+
+/* ==========================================================================
+   INLINE DETAILS (embedded in invitation section)
+   ========================================================================== */
+.inline-details {
+    margin-top: 48px;
+    padding-top: 8px;
+}
+
+.inline-details-title {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    color: var(--color-text);
+    margin-bottom: 24px;
+}
+
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-card {
+    background: var(--color-card-bg);
+    border-radius: 12px;
+    padding: 24px 16px;
+    border: 1px solid rgba(192, 149, 110, 0.15);
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(192, 149, 110, 0.12);
+}
+
+.detail-card-glow {
+    border-color: rgba(192, 149, 110, 0.35);
+    background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(192, 149, 110, 0.08));
+    box-shadow: 0 4px 20px rgba(192, 149, 110, 0.1);
+}
+
+.detail-icon {
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+
+.detail-card h3 {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    color: var(--color-text-light);
+    margin-bottom: 6px;
+}
+
+.detail-value {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--color-text);
+}
+
+.detail-address {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--color-text-light);
+    margin-top: 6px;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   SECTION 3 – Story + Closing (combined)
+   ========================================================================== */
+.section-closing {
+    background: linear-gradient(
+        to top,
+        rgba(192, 149, 110, 0.08) 0%,
+        var(--color-bg) 100%
+    );
+}
+
+.story-text p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 2.4;
+    letter-spacing: 2px;
+    color: var(--color-text);
+}
+
+.story-text p + p {
+    margin-top: 8px;
+}
+
+.closing-divider {
+    margin: 40px 0;
+    text-align: center;
+}
+
+.closing-divider .sparkle {
+    color: var(--color-accent-light);
+    font-size: 14px;
+}
+
+.closing-text p {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 2.4;
+    letter-spacing: 4px;
+    color: var(--color-text);
+}
+
+.closing-names {
+    margin-top: 40px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.closing-names .heart {
+    color: var(--color-accent);
+    font-size: 16px;
+    animation: heart-beat 1.5s ease-in-out infinite;
+}
+
+@keyframes heart-beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+.footer-text {
+    margin-top: 24px;
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--color-text-light);
+}
+
+/* ---------- Desktop tweaks (still mobile-first) ---------- */
+@media (min-width: 768px) {
+    .section-inner {
+        max-width: 560px;
+    }
+
+    .cover-names .name {
+        font-size: 44px;
+    }
+
+    .details-grid {
+        flex-direction: row;
+        gap: 16px;
+    }
+
+    .detail-card {
+        flex: 1;
+    }
+
+    .section-invite {
+        padding: 80px 0;
+    }
+}

@@ -1,0 +1,48 @@
+services:
+  wedding:
+    build: .
+    container_name: wedding-invitation
+    ports:
+      - "5000:5000"
+    volumes:
+      # 持久化数据目录（宾客数据 + 自定义音乐）
+      - wedding_data:/app/data
+    environment:
+      # ---- 必填信息 ----
+      - GROOM_NAME=新郎
+      - BRIDE_NAME=新娘
+      - WEDDING_DATE=2026年10月01日
+      - WEDDING_DATE_WEEKDAY=星期四
+      - BANQUET_TIME=18:00
+      - CEREMONY_TIME=16:00
+      - WEDDING_VENUE=某某酒店·草坪厅
+      - WEDDING_ADDRESS=
+
+      # ---- 后台管理 ----
+      - ADMIN_PASSWORD=admin123
+      - SECRET_KEY=please-change-this-to-a-random-string
+
+      # ---- BGM ----
+      # 音乐文件名（放在 data/music/ 目录下可覆盖默认BGM）
+      - BGM_FILENAME=bgm.ogg
+
+      # ---- 照片 ----
+      # 封面照片文件名（放在 data/photo/ 目录下可覆盖默认照片）
+      - COVER_PHOTO=cover.jpg
+
+      # ---- 可选文案（不设置则使用默认） ----
+      # - COVER_SUBTITLE=WE ARE GETTING MARRIED
+      # - INVITE_TITLE=诚挚邀请
+      # - INVITE_TEXT=谨定于{wedding_date}（{wedding_date_weekday}）\n为我俩举行婚礼\n届时恭请光临
+      # - STORY_TITLE=我们的故事
+      # - STORY_TEXT=从相遇到相知，从相知到相爱，\n感谢命运让我们在茫茫人海中找到彼此。\n往后余生，愿与你共赴每一个春夏秋冬。
+      # - DETAILS_TITLE=婚礼详情
+      # - CEREMONY_LABEL=草坪仪式
+      # - BANQUET_LABEL=婚宴时间
+      # - VENUE_LABEL=婚宴地点
+      # - CLOSING_TEXT=你们的到来\n是我们最大的幸福
+      # - FOOTER_TEXT=期待与您共同见证这美好时刻
+    restart: unless-stopped
+
+volumes:
+  wedding_data:

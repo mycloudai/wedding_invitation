@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+data/
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+venv/
+node_modules/
+.DS_Store
+gen_mock_photo.py
+run_local.sh
+README.md

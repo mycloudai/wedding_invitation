@@ -1,0 +1,47 @@
+# ==========================================================================
+# K8s NFS PersistentVolume + PersistentVolumeClaim 示例
+#
+# 适用场景：使用 NFS 服务器为婚礼邀请函提供持久化存储
+#   - 宾客数据 (guests.json)
+#   - 自定义音乐 (music/)
+#   - 自定义照片 (photo/)
+#
+# 使用前请修改：
+#   1. NFS 服务器地址 (nfs.server)
+#   2. NFS 导出路径 (nfs.path)
+#   3. 存储大小 (storage) — 按需调整
+# ==========================================================================
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wedding-data-nfs-pv
+  labels:
+    app: wedding-invitation
+    type: nfs
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany            # NFS 支持多节点读写
+  persistentVolumeReclaimPolicy: Retain   # 删除 PVC 后保留数据
+  storageClassName: nfs
+  nfs:
+    server: 192.168.1.100      # ← 替换为你的 NFS 服务器 IP
+    path: /exports/wedding     # ← 替换为你的 NFS 导出路径
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wedding-data-pvc       # 与 deployment.yaml 中 claimName 对应
+  labels:
+    app: wedding-invitation
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs
+  resources:
+    requests:
+      storage: 1Gi

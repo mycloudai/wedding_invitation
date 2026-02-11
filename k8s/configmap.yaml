@@ -1,0 +1,76 @@
+# ==========================================================================
+# K8s ConfigMap – 婚礼邀请函配置示例
+# 按需修改后 kubectl apply -f configmap.yaml
+# 
+# 说明：
+#   - 必填项已列出，可直接修改值
+#   - 可选项已注释，如需自定义请取消注释并修改
+#   - 多行文本使用 \n 表示换行
+# ==========================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wedding-config
+  labels:
+    app: wedding-invitation
+data:
+  # ========================================
+  # 必填信息
+  # ========================================
+  GROOM_NAME: "新郎"
+  BRIDE_NAME: "新娘"
+  WEDDING_DATE: "2026年10月01日"
+  WEDDING_DATE_WEEKDAY: "星期四"
+  BANQUET_TIME: "18:00"
+  CEREMONY_TIME: "16:00"
+  WEDDING_VENUE: "某某酒店·草坪厅"
+  
+  # 婚宴地址（选填）
+  WEDDING_ADDRESS: ""
+  
+  # 后台管理密码（建议修改）
+  ADMIN_PASSWORD: "admin123"
+  
+  # 媒体文件名（需与挂载的文件对应）
+  BGM_FILENAME: "bgm.ogg"
+  COVER_PHOTO: "cover.jpg"
+
+  # ========================================
+  # 可选文案定制（不设置则使用默认值）
+  # ========================================
+  
+  # 封面副标题
+  # COVER_SUBTITLE: "WE ARE GETTING MARRIED"
+  
+  # 邀请标题
+  # INVITE_TITLE: "诚挚邀请"
+  
+  # 邀请正文（支持 {wedding_date} 和 {wedding_date_weekday} 占位符）
+  # INVITE_TEXT: "谨定于{wedding_date}（{wedding_date_weekday}）\n为我俩举行婚礼\n诚邀您拨冗出席\n共同见证我们的幸福时刻"
+  
+  # 爱情故事标题
+  # STORY_TITLE: "我们的故事"
+  
+  # 爱情故事正文
+  # STORY_TEXT: "从相遇到相知，从相知到相爱\n感谢命运让我们在茫茫人海中找到彼此\n感谢一路走来所有的温暖与陪伴\n如今我们即将携手步入婚姻的殿堂\n愿与你们一起分享这份喜悦\n往后余生，风雪是你，平淡是你\n愿我们的爱情故事 成为最美的篇章"
+  
+  # 详情区块标题
+  # DETAILS_TITLE: "婚礼详情"
+  
+  # 草坪仪式标签
+  # CEREMONY_LABEL: "草坪仪式"
+  
+  # 婚宴时间标签
+  # BANQUET_LABEL: "婚宴时间"
+  
+  # 婚宴地点标签
+  # VENUE_LABEL: "婚宴地点"
+  
+  # 草坪仪式邀请文案（仅对勾选了草坪仪式的宾客显示）
+  # CEREMONY_INVITE_TEXT: "我们诚挚地邀请您参加下午的草坪婚礼仪式\n在蓝天白云下，一起见证爱与承诺的美好瞬间"
+  
+  # 结尾祝福语
+  # CLOSING_TEXT: "你们的每一次微笑与祝福\n都是我们最珍贵的礼物\n期待与您共同见证这美好时刻"
+  
+  # 页脚文字
+  # FOOTER_TEXT: "感恩相遇 · 期待重逢"

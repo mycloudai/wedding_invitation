@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 · 宾客管理</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <h1>宾客管理</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('index') }}" class="btn btn-outline" target="_blank">预览邀请函</a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-text">退出</a>
+            </div>
+        </header>
+
+        <!-- Add Guest -->
+        <section class="card add-guest-card">
+            <h2>生成邀请函</h2>
+            <p class="card-desc">输入宾客姓名，生成专属邀请函链接（送呈 __ 台启）</p>
+            <form id="add-guest-form" class="add-guest-form">
+                <div class="input-row">
+                    <input type="text" id="guest-name" placeholder="宾客姓名" required>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="guest-ceremony">
+                        <span>邀请参加草坪仪式</span>
+                    </label>
+                    <button type="submit" class="btn btn-primary">生成链接</button>
+                </div>
+            </form>
+            <!-- Result area -->
+            <div id="result" class="result-area" style="display:none;">
+                <p class="result-label">专属邀请函链接：</p>
+                <div class="result-url-row">
+                    <input type="text" id="result-url" readonly>
+                    <button class="btn btn-outline" onclick="copyUrl()">复制链接</button>
+                </div>
+                <p class="result-label" style="margin-top:12px;">一键复制邀请消息：</p>
+                <div class="result-url-row">
+                    <textarea id="result-message" readonly rows="3"></textarea>
+                    <button class="btn btn-outline" onclick="copyMessage()">复制消息</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guest List -->
+        <section class="card guest-list-card">
+            <h2>已生成的邀请 <span class="count" id="guest-count">{{ guests | length }}</span></h2>
+            <div class="guest-table-wrapper">
+                <table class="guest-table" id="guest-table">
+                    <thead>
+                        <tr>
+                            <th>宾客姓名</th>
+                            <th>草坪仪式</th>
+                            <th>专属链接</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for code, info in guests.items() %}
+                        <tr data-code="{{ code }}">
+                            <td class="td-name">{{ info.name }}</td>
+                            <td class="td-ceremony">
+                                {% if info.get('ceremony', False) %}
+                                <span class="badge badge-yes">✓ 参加</span>
+                                {% else %}
+                                <span class="badge badge-no">–</span>
+                                {% endif %}
+                            </td>
+                            <td class="td-url">
+                                <a href="{{ url_for('invitation', code=code) }}" target="_blank">
+                                    /i/{{ code }}
+                                </a>
+                            </td>
+                            <td class="td-actions">
+                                <button class="btn btn-sm btn-outline" onclick="copyText('{{ url_for('invitation', code=code, _external=True) }}')">复制</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteGuest('{{ code }}')">删除</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if not guests %}
+                <p class="empty-msg" id="empty-msg">暂无宾客，请在上方添加</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Pass config to JS for invitation message generation
+        const WEDDING_CONFIG = {
+            groomName: {{ config.groom_name | tojson }},
+            brideName: {{ config.bride_name | tojson }}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

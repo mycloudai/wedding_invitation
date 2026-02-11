@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 · 登录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>婚礼邀请函</h1>
+            <p class="login-subtitle">管理后台</p>
+            <form method="POST" action="{{ url_for('admin_login') }}">
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="请输入管理密码" required autofocus>
+                </div>
+                {% if error %}
+                <p class="error">{{ error }}</p>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">登 录</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
