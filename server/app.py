@@ -14,6 +14,7 @@ from flask import (
     session,
     abort,
 )
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(
     __name__,
@@ -21,6 +22,11 @@ app = Flask(
     static_folder=os.path.join(os.path.dirname(__file__), "..", "static"),
 )
 app.secret_key = os.environ.get("SECRET_KEY", "wedding-secret-key-change-me")
+
+# Fix for reverse proxy to correctly detect HTTPS
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=0
+)
 
 
 # ---------------------------------------------------------------------------

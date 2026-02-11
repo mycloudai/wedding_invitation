@@ -15,7 +15,6 @@
         <header class="admin-header">
             <h1>宾客管理</h1>
             <div class="header-actions">
-                <a href="{{ url_for('index') }}" class="btn btn-outline" target="_blank">预览邀请函</a>
                 <a href="{{ url_for('admin_logout') }}" class="btn btn-text">退出</a>
             </div>
         </header>
@@ -58,7 +57,6 @@
                         <tr>
                             <th>宾客姓名</th>
                             <th>草坪仪式</th>
-                            <th>专属链接</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -73,13 +71,9 @@
                                 <span class="badge badge-no">–</span>
                                 {% endif %}
                             </td>
-                            <td class="td-url">
-                                <a href="{{ url_for('invitation', code=code) }}" target="_blank">
-                                    /i/{{ code }}
-                                </a>
-                            </td>
                             <td class="td-actions">
-                                <button class="btn btn-sm btn-outline" onclick="copyText('{{ url_for('invitation', code=code, _external=True) }}')">复制</button>
+                                <a href="{{ url_for('invitation', code=code) }}" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>
+                                <button class="btn btn-sm btn-outline" onclick="copyText('{{ url_for('invitation', code=code, _external=True) }}')">复制链接</button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteGuest('{{ code }}')">删除</button>
                             </td>
                         </tr>
