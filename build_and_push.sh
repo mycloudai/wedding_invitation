@@ -32,10 +32,16 @@ fi
 echo -e "${GREEN}Docker 运行正常${NC}"
 echo ""
 
-# 获取版本号（默认使用 git commit hash 或时间戳）
-if git rev-parse --git-dir > /dev/null 2>&1; then
-    VERSION=$(git rev-parse --short HEAD)
-    echo -e "${YELLOW}检测到 Git，使用 commit hash 作为版本: ${VERSION}${NC}"
+
+# 获取版本号（优先 git commit hash，否则用时间戳）
+if [ -d .git ]; then
+    if git rev-parse --verify HEAD >/dev/null 2>&1; then
+        VERSION=$(git rev-parse --short HEAD)
+        echo -e "${YELLOW}检测到 Git，使用 commit hash 作为版本: ${VERSION}${NC}"
+    else
+        VERSION=$(date +%Y%m%d-%H%M%S)
+        echo -e "${YELLOW}Git 仓库无提交，使用时间戳作为版本: ${VERSION}${NC}"
+    fi
 else
     VERSION=$(date +%Y%m%d-%H%M%S)
     echo -e "${YELLOW}未检测到 Git，使用时间戳作为版本: ${VERSION}${NC}"
