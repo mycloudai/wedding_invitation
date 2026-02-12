@@ -77,6 +77,9 @@
                     <div class="stat-label">预估总人数</div>
                 </div>
             </div>
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-primary" onclick="exportAttendingGuests()">导出参加宾客名单</button>
+            </div>
         </section>
 
         <!-- Guest List -->
@@ -139,46 +142,21 @@
     </div>
 
     <script>
-        // Pass config to JS for invitation message generation
+        // Pass config and data to JS
         const WEDDING_CONFIG = {
             groomName: {{ config.groom_name | tojson }},
             brideName: {{ config.bride_name | tojson }}
         };
 
-        // Calculate RSVP statistics
+        // Pass guests data to JS
         const GUESTS_DATA = {{ guests | tojson }};
-
-        function calculateStats() {
-            let replied = 0;
-            let attending = 0;
-            let notAttending = 0;
-            let totalGuests = 0;
-
-            for (const code in GUESTS_DATA) {
-                const guest = GUESTS_DATA[code];
-                const rsvp = guest.rsvp || {};
-
-                if (rsvp.is_attending !== undefined && rsvp.is_attending !== null) {
-                    replied++;
-                    if (rsvp.is_attending) {
-                        attending++;
-                        totalGuests += rsvp.guest_count || 0;
-                    } else {
-                        notAttending++;
-                    }
-                }
-            }
-
-            // Update UI
-            document.getElementById('stat-replied').textContent = replied;
-            document.getElementById('stat-attending').textContent = attending;
-            document.getElementById('stat-not-attending').textContent = notAttending;
-            document.getElementById('stat-total-guests').textContent = totalGuests;
-        }
-
-        // Calculate stats on page load
-        calculateStats();
     </script>
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script>
+        // Calculate stats on page load
+        if (typeof calculateStats === 'function') {
+            calculateStats(GUESTS_DATA);
+        }
+    </script>
 </body>
 </html>

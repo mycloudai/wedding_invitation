@@ -28,6 +28,7 @@
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -107,12 +108,18 @@ body.no-scroll {
     cursor: pointer;
     transition: all 0.3s ease;
     animation: btn-glow 2.5s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .landing-btn:hover {
     background: var(--color-accent);
     color: var(--color-white);
     border-color: var(--color-accent);
+}
+
+.landing-btn:active {
+    transform: scale(0.96);
 }
 
 @keyframes btn-glow {
@@ -807,6 +814,8 @@ body.no-scroll {
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .rsvp-btn .btn-icon {
@@ -816,6 +825,10 @@ body.no-scroll {
 .rsvp-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(192, 149, 110, 0.2);
+}
+
+.rsvp-btn:active {
+    transform: translateY(0);
 }
 
 .rsvp-btn.active {
@@ -892,12 +905,18 @@ body.no-scroll {
     cursor: pointer;
     transition: all 0.3s ease;
     animation: slideDown 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .rsvp-submit:hover {
     background: var(--color-gold);
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(192, 149, 110, 0.3);
+}
+
+.rsvp-submit:active {
+    transform: translateY(0);
 }
 
 .rsvp-message {
@@ -943,12 +962,18 @@ body.no-scroll {
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .rsvp-change:hover {
     background: var(--color-accent);
     color: var(--color-white);
     border-color: var(--color-accent);
+}
+
+.rsvp-change:active {
+    transform: scale(0.96);
 }
 
 /* ---------- Desktop tweaks (still mobile-first) ---------- */

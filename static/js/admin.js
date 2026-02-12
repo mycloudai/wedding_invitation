@@ -190,19 +190,16 @@ function escapeHtml(str) {
 }
 
 // ---------- RSVP Statistics ----------
-const GUESTS_DATA = {{ guests | tojson }};
-
-function calculateStats() {
+function calculateStats(guestsData) {
     let replied = 0;
     let attending = 0;
     let notAttending = 0;
     let pending = 0;
-    let ceremonyCount = 0;
     let ceremonyAttending = 0;
     let totalGuests = 0;
 
-    for (const code in GUESTS_DATA) {
-        const guest = GUESTS_DATA[code];
+    for (const code in guestsData) {
+        const guest = guestsData[code];
         const rsvp = guest.rsvp || {};
         const invitedCeremony = guest.ceremony;
 
@@ -211,19 +208,20 @@ function calculateStats() {
             if (rsvp.is_attending) {
                 attending++;
                 totalGuests += rsvp.guest_count || 0;
-                if (invitedCeremony) ceremonyAttending += rsvp.guest_count || 0;
+                if (invitedCeremony) {
+                    ceremonyAttending += rsvp.guest_count || 0;
+                }
             } else {
                 notAttending++;
             }
         } else {
             pending++;
         }
-        if (invitedCeremony) ceremonyCount++;
     }
 
     document.getElementById('stat-replied').textContent = replied;
     document.getElementById('stat-attending').textContent = attending;
-    document.getElementById('stat-not_attending').textContent = notAttending;
+    document.getElementById('stat-not-attending').textContent = notAttending;
     document.getElementById('stat-pending').textContent = pending;
     document.getElementById('stat-ceremony').textContent = ceremonyAttending;
     document.getElementById('stat-total-guests').textContent = totalGuests;
@@ -231,25 +229,41 @@ function calculateStats() {
 
 // 名单弹窗入口
 window.showGuestList = function(type) {
+    if (typeof GUESTS_DATA === 'undefined') {
+        alert('数据未加载');
+        return;
+    }
+
     let list = [];
     for (const code in GUESTS_DATA) {
         const guest = GUESTS_DATA[code];
         const rsvp = guest.rsvp || {};
+
         switch(type) {
             case 'replied':
-                if (rsvp.is_attending !== undefined && rsvp.is_attending !== null) list.push(guest);
+                if (rsvp.is_attending !== undefined && rsvp.is_attending !== null) {
+                    list.push(guest);
+                }
                 break;
             case 'attending':
-                if (rsvp.is_attending === true) list.push(guest);
+                if (rsvp.is_attending === true) {
+                    list.push(guest);
+                }
                 break;
             case 'not_attending':
-                if (rsvp.is_attending === false) list.push(guest);
+                if (rsvp.is_attending === false) {
+                    list.push(guest);
+                }
                 break;
             case 'pending':
-                if (rsvp.is_attending === undefined || rsvp.is_attending === null) list.push(guest);
+                if (rsvp.is_attending === undefined || rsvp.is_attending === null) {
+                    list.push(guest);
+                }
                 break;
             case 'ceremony':
-                if (guest.ceremony && rsvp.is_attending === true) list.push(guest);
+                if (guest.ceremony && rsvp.is_attending === true) {
+                    list.push(guest);
+                }
                 break;
         }
     }
@@ -258,19 +272,23 @@ window.showGuestList = function(type) {
 
 // 简单弹窗展示名单
 function showListDialog(type, list) {
-    let title = {
+    const titles = {
         replied: '已回复宾客',
         attending: '参加宾客',
         not_attending: '不参加宾客',
         pending: '未回复宾客',
         ceremony: '草坪仪式参加宾客'
-    }[type] || '宾客名单';
+    };
+
+    let title = titles[type] || '宾客名单';
     let html = '<div class="guest-list-dialog"><h3>' + title + '</h3>';
+
     if (list.length === 0) {
         html += '<p>暂无数据</p>';
     } else {
         html += '<ul>';
-        for (const guest of list) {
+        for (let i = 0; i < list.length; i++) {
+            const guest = list[i];
             html += '<li>' + escapeHtml(guest.name);
             if (guest.rsvp && guest.rsvp.guest_count) {
                 html += ' <span style="color:#aaa">(' + guest.rsvp.guest_count + '人)</span>';
@@ -280,19 +298,67 @@ function showListDialog(type, list) {
         html += '</ul>';
     }
     html += '<button class="btn btn-outline" onclick="closeGuestDialog()">关闭</button></div>';
-    let dialog = document.createElement('div');
-    dialog.id = 'guest-list-dialog-overlay';
-    dialog.style.position = 'fixed';
-    dialog.style.inset = '0';
-    dialog.style.background = 'rgba(0,0,0,0.18)';
-    dialog.style.zIndex = '9999';
-    dialog.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%">' + html + '</div>';
-    document.body.appendChild(dialog);
+
+    let overlay = document.createElement('div');
+    overlay.id = 'guest-list-dialog-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.18)';
+    overlay.style.zIndex = '9999';
+    overlay.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%">' + html + '</div>';
+    document.body.appendChild(overlay);
 }
+
 window.closeGuestDialog = function() {
     let dialog = document.getElementById('guest-list-dialog-overlay');
     if (dialog) dialog.remove();
 }
 
-// Calculate stats on page load
-calculateStats();
+// Export attending guests
+window.exportAttendingGuests = function() {
+    if (typeof GUESTS_DATA === 'undefined') {
+        alert('数据未加载');
+        return;
+    }
+
+    let attendingGuests = [];
+    for (const code in GUESTS_DATA) {
+        const guest = GUESTS_DATA[code];
+        const rsvp = guest.rsvp || {};
+
+        if (rsvp.is_attending === true) {
+            attendingGuests.push({
+                name: guest.name,
+                ceremony: guest.ceremony ? '是' : '否',
+                guest_count: rsvp.guest_count || 0
+            });
+        }
+    }
+
+    if (attendingGuests.length === 0) {
+        alert('暂无参加宾客');
+        return;
+    }
+
+    // Generate CSV
+    let csv = '\uFEFF'; // BOM for Excel UTF-8
+    csv += '宾客姓名,参加人数,参加草坪仪式\n';
+
+    for (let i = 0; i < attendingGuests.length; i++) {
+        const guest = attendingGuests[i];
+        csv += guest.name + ',' + guest.guest_count + ',' + guest.ceremony + '\n';
+    }
+
+    // Download
+    let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    let link = document.createElement('a');
+    let url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', '参加宾客名单_' + new Date().toISOString().slice(0, 10) + '.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast('导出成功：' + attendingGuests.length + ' 位宾客');
+}
