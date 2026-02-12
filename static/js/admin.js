@@ -4,6 +4,7 @@
    - Delete guest
    - Copy URL
    - Toast notifications
+   - RSVP Statistics
    ========================================================================== */
 
 // ---------- Toast ----------
@@ -187,3 +188,111 @@ function escapeHtml(str) {
     div.textContent = str;
     return div.innerHTML;
 }
+
+// ---------- RSVP Statistics ----------
+const GUESTS_DATA = {{ guests | tojson }};
+
+function calculateStats() {
+    let replied = 0;
+    let attending = 0;
+    let notAttending = 0;
+    let pending = 0;
+    let ceremonyCount = 0;
+    let ceremonyAttending = 0;
+    let totalGuests = 0;
+
+    for (const code in GUESTS_DATA) {
+        const guest = GUESTS_DATA[code];
+        const rsvp = guest.rsvp || {};
+        const invitedCeremony = guest.ceremony;
+
+        if (rsvp.is_attending !== undefined && rsvp.is_attending !== null) {
+            replied++;
+            if (rsvp.is_attending) {
+                attending++;
+                totalGuests += rsvp.guest_count || 0;
+                if (invitedCeremony) ceremonyAttending += rsvp.guest_count || 0;
+            } else {
+                notAttending++;
+            }
+        } else {
+            pending++;
+        }
+        if (invitedCeremony) ceremonyCount++;
+    }
+
+    document.getElementById('stat-replied').textContent = replied;
+    document.getElementById('stat-attending').textContent = attending;
+    document.getElementById('stat-not_attending').textContent = notAttending;
+    document.getElementById('stat-pending').textContent = pending;
+    document.getElementById('stat-ceremony').textContent = ceremonyAttending;
+    document.getElementById('stat-total-guests').textContent = totalGuests;
+}
+
+// 名单弹窗入口
+window.showGuestList = function(type) {
+    let list = [];
+    for (const code in GUESTS_DATA) {
+        const guest = GUESTS_DATA[code];
+        const rsvp = guest.rsvp || {};
+        switch(type) {
+            case 'replied':
+                if (rsvp.is_attending !== undefined && rsvp.is_attending !== null) list.push(guest);
+                break;
+            case 'attending':
+                if (rsvp.is_attending === true) list.push(guest);
+                break;
+            case 'not_attending':
+                if (rsvp.is_attending === false) list.push(guest);
+                break;
+            case 'pending':
+                if (rsvp.is_attending === undefined || rsvp.is_attending === null) list.push(guest);
+                break;
+            case 'ceremony':
+                if (guest.ceremony && rsvp.is_attending === true) list.push(guest);
+                break;
+        }
+    }
+    showListDialog(type, list);
+}
+
+// 简单弹窗展示名单
+function showListDialog(type, list) {
+    let title = {
+        replied: '已回复宾客',
+        attending: '参加宾客',
+        not_attending: '不参加宾客',
+        pending: '未回复宾客',
+        ceremony: '草坪仪式参加宾客'
+    }[type] || '宾客名单';
+    let html = '<div class="guest-list-dialog"><h3>' + title + '</h3>';
+    if (list.length === 0) {
+        html += '<p>暂无数据</p>';
+    } else {
+        html += '<ul>';
+        for (const guest of list) {
+            html += '<li>' + escapeHtml(guest.name);
+            if (guest.rsvp && guest.rsvp.guest_count) {
+                html += ' <span style="color:#aaa">(' + guest.rsvp.guest_count + '人)</span>';
+            }
+            html += '</li>';
+        }
+        html += '</ul>';
+    }
+    html += '<button class="btn btn-outline" onclick="closeGuestDialog()">关闭</button></div>';
+    let dialog = document.createElement('div');
+    dialog.id = 'guest-list-dialog-overlay';
+    dialog.style.position = 'fixed';
+    dialog.style.inset = '0';
+    dialog.style.background = 'rgba(0,0,0,0.18)';
+    dialog.style.zIndex = '9999';
+    dialog.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%">' + html + '</div>';
+    document.body.appendChild(dialog);
+}
+window.closeGuestDialog = function() {
+    let dialog = document.getElementById('guest-list-dialog-overlay');
+    if (dialog) dialog.remove();
+}
+
+// Calculate stats on page load
+calculateStats();

@@ -1,3 +1,42 @@
+/* ---------- Guest List Dialog ---------- */
+.guest-list-dialog {
+    background: var(--color-card);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    min-width: 260px;
+    box-shadow: 0 8px 32px rgba(192, 149, 110, 0.12);
+    text-align: center;
+}
+.guest-list-dialog h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    letter-spacing: 2px;
+    color: var(--color-accent);
+}
+.guest-list-dialog ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px 0;
+}
+.guest-list-dialog li {
+    font-size: 14px;
+    color: var(--color-text);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+.guest-list-dialog button {
+    margin-top: 12px;
+}
+.stat-link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--color-accent);
+    transition: color 0.2s;
+}
+.stat-link:hover {
+    color: var(--color-accent-hover);
+}
 /* ==========================================================================
    Admin Panel Styles
    ========================================================================== */

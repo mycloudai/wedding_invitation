@@ -53,16 +53,24 @@
             <h2>回复统计</h2>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-value" id="stat-replied">0</div>
+                    <div class="stat-value stat-link" id="stat-replied" onclick="showGuestList('replied')">0</div>
                     <div class="stat-label">已回复</div>
                 </div>
                 <div class="stat-item stat-attending">
-                    <div class="stat-value" id="stat-attending">0</div>
+                    <div class="stat-value stat-link" id="stat-attending" onclick="showGuestList('attending')">0</div>
                     <div class="stat-label">参加</div>
                 </div>
                 <div class="stat-item stat-not-attending">
-                    <div class="stat-value" id="stat-not-attending">0</div>
+                    <div class="stat-value stat-link" id="stat-not-attending" onclick="showGuestList('not_attending')">0</div>
                     <div class="stat-label">不参加</div>
+                </div>
+                <div class="stat-item stat-pending">
+                    <div class="stat-value stat-link" id="stat-pending" onclick="showGuestList('pending')">0</div>
+                    <div class="stat-label">未回复</div>
+                </div>
+                <div class="stat-item stat-ceremony">
+                    <div class="stat-value stat-link" id="stat-ceremony" onclick="showGuestList('ceremony')">0</div>
+                    <div class="stat-label">草坪仪式参加人数</div>
                 </div>
                 <div class="stat-item stat-total">
                     <div class="stat-value" id="stat-total-guests">0</div>
