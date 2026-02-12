@@ -76,7 +76,7 @@ body {
     font-weight: 600;
     letter-spacing: 6px;
     color: var(--color-text);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .landing-date {
@@ -84,7 +84,7 @@ body {
     font-weight: 300;
     letter-spacing: 4px;
     color: var(--color-text-light);
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 }
 
 .landing-btn {
