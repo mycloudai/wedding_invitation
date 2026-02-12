@@ -45,12 +45,19 @@
     const overlay = document.getElementById('landing-overlay');
     const openBtn = document.getElementById('open-btn');
 
+    // Prevent scrolling before opening invitation
+    document.body.classList.add('no-scroll');
+
     function dismissOverlay() {
         if (musicStarted) return;
         musicStarted = true;
         // This click counts as user interaction → browser allows play
         bgm.play().then(() => updateMusicUI(true)).catch(() => {});
         overlay.classList.add('fade-out');
+
+        // Re-enable scrolling
+        document.body.classList.remove('no-scroll');
+
         setTimeout(() => { overlay.style.display = 'none'; }, 600);
     }
 
