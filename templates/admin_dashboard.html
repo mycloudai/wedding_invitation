@@ -19,6 +19,38 @@
             </div>
         </header>
 
+        <!-- Theme Selector -->
+        <section class="card theme-card">
+            <h2>主题设置</h2>
+            <p class="card-desc">选择邀请函配色主题</p>
+            <div class="theme-selector">
+                <div class="theme-option" data-theme="classic" onclick="selectTheme('classic')">
+                    <div class="theme-preview theme-classic"></div>
+                    <span>经典米色</span>
+                </div>
+                <div class="theme-option" data-theme="pink" onclick="selectTheme('pink')">
+                    <div class="theme-preview theme-pink"></div>
+                    <span>浪漫粉色</span>
+                </div>
+                <div class="theme-option" data-theme="blue" onclick="selectTheme('blue')">
+                    <div class="theme-preview theme-blue"></div>
+                    <span>优雅蓝色</span>
+                </div>
+                <div class="theme-option" data-theme="green" onclick="selectTheme('green')">
+                    <div class="theme-preview theme-green"></div>
+                    <span>清新绿色</span>
+                </div>
+                <div class="theme-option" data-theme="lavender" onclick="selectTheme('lavender')">
+                    <div class="theme-preview theme-lavender"></div>
+                    <span>薰衣草紫</span>
+                </div>
+                <div class="theme-option" data-theme="red" onclick="selectTheme('red')">
+                    <div class="theme-preview theme-red"></div>
+                    <span>喜庆红色</span>
+                </div>
+            </div>
+        </section>
+
         <!-- Add Guest -->
         <section class="card add-guest-card">
             <h2>生成邀请函</h2>
@@ -51,30 +83,50 @@
         <!-- RSVP Statistics -->
         <section class="card stats-card">
             <h2>回复统计</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value stat-link" id="stat-replied" onclick="showGuestList('replied')">0</div>
-                    <div class="stat-label">已回复</div>
+            <div class="stats-grid-wrapper">
+                <!-- 回复状态组 -->
+                <div class="stats-group">
+                    <h3 class="stats-group-title">回复状态</h3>
+                    <div class="stats-row">
+                        <div class="stat-item stat-replied">
+                            <div class="stat-value stat-link" id="stat-replied" onclick="showGuestList('replied')">0</div>
+                            <div class="stat-label">已回复</div>
+                        </div>
+                        <div class="stat-item stat-pending">
+                            <div class="stat-value stat-link" id="stat-pending" onclick="showGuestList('pending')">0</div>
+                            <div class="stat-label">未回复</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-item stat-attending">
-                    <div class="stat-value stat-link" id="stat-attending" onclick="showGuestList('attending')">0</div>
-                    <div class="stat-label">参加</div>
+
+                <!-- 参加情况组 -->
+                <div class="stats-group">
+                    <h3 class="stats-group-title">参加情况</h3>
+                    <div class="stats-row">
+                        <div class="stat-item stat-attending">
+                            <div class="stat-value stat-link" id="stat-attending" onclick="showGuestList('attending')">0</div>
+                            <div class="stat-label">参加</div>
+                        </div>
+                        <div class="stat-item stat-not-attending">
+                            <div class="stat-value stat-link" id="stat-not-attending" onclick="showGuestList('not_attending')">0</div>
+                            <div class="stat-label">不参加</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-item stat-not-attending">
-                    <div class="stat-value stat-link" id="stat-not-attending" onclick="showGuestList('not_attending')">0</div>
-                    <div class="stat-label">不参加</div>
-                </div>
-                <div class="stat-item stat-pending">
-                    <div class="stat-value stat-link" id="stat-pending" onclick="showGuestList('pending')">0</div>
-                    <div class="stat-label">未回复</div>
-                </div>
-                <div class="stat-item stat-ceremony">
-                    <div class="stat-value stat-link" id="stat-ceremony" onclick="showGuestList('ceremony')">0</div>
-                    <div class="stat-label">草坪仪式参加人数</div>
-                </div>
-                <div class="stat-item stat-total">
-                    <div class="stat-value" id="stat-total-guests">0</div>
-                    <div class="stat-label">预估总人数</div>
+
+                <!-- 总计组 -->
+                <div class="stats-group">
+                    <h3 class="stats-group-title">总计</h3>
+                    <div class="stats-row">
+                        <div class="stat-item stat-ceremony">
+                            <div class="stat-value stat-link" id="stat-ceremony" onclick="showGuestList('ceremony')">0</div>
+                            <div class="stat-label">草坪仪式参加人数</div>
+                        </div>
+                        <div class="stat-item stat-total">
+                            <div class="stat-value" id="stat-total-guests">0</div>
+                            <div class="stat-label">预估总人数</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div style="margin-top: 20px; text-align: center;">
@@ -128,6 +180,7 @@
                             <td class="td-actions">
                                 <a href="{{ url_for('invitation', code=code) }}" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>
                                 <button class="btn btn-sm btn-outline" onclick="copyText('{{ url_for('invitation', code=code, _external=True) }}')">复制链接</button>
+                                <button class="btn btn-sm btn-outline" onclick="copyInviteMessage('{{ info.name }}', '{{ url_for('invitation', code=code, _external=True) }}')">复制邀请信息</button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteGuest('{{ code }}')">删除</button>
                             </td>
                         </tr>

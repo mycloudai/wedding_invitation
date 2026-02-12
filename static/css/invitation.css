@@ -25,6 +25,104 @@
     --section-padding: 80px 24px;
 }
 
+/* Theme: Classic Beige (默认经典米色) */
+body[data-theme="classic"],
+body:not([data-theme]) {
+    --color-bg: #faf8f5;
+    --color-bg-alt: #f3efe9;
+    --color-text: #3d3632;
+    --color-text-light: #7a706a;
+    --color-accent: #c0956e;
+    --color-accent-light: #ddc5a8;
+    --color-gold: #b8944f;
+}
+
+/* Theme: Romantic Pink (浪漫粉色) */
+body[data-theme="pink"] {
+    --color-bg: #fef5f8;
+    --color-bg-alt: #fce9f0;
+    --color-text: #4a3940;
+    --color-text-light: #8a747c;
+    --color-accent: #d87d99;
+    --color-accent-light: #edb3c5;
+    --color-gold: #c96983;
+}
+
+/* Theme: Elegant Blue (优雅蓝色) */
+body[data-theme="blue"] {
+    --color-bg: #f5f8fa;
+    --color-bg-alt: #e8f0f5;
+    --color-text: #2d3e50;
+    --color-text-light: #6b7c8e;
+    --color-accent: #5a8db8;
+    --color-accent-light: #9bbdd9;
+    --color-gold: #4d7ca3;
+}
+
+/* Theme: Fresh Green (清新绿色) */
+body[data-theme="green"] {
+    --color-bg: #f7faf5;
+    --color-bg-alt: #eef5e8;
+    --color-text: #3a4735;
+    --color-text-light: #6e7a69;
+    --color-accent: #7fa878;
+    --color-accent-light: #b3d1ad;
+    --color-gold: #6b9463;
+}
+
+/* Theme: Lavender Purple (薰衣草紫) */
+body[data-theme="lavender"] {
+    --color-bg: #f9f7fc;
+    --color-bg-alt: #f0ebf7;
+    --color-text: #44395a;
+    --color-text-light: #7d7089;
+    --color-accent: #9b7bc7;
+    --color-accent-light: #c5aee0;
+    --color-gold: #8566b5;
+}
+
+/* Theme: Festive Red (喜庆红色) */
+body[data-theme="red"] {
+    --color-bg: #fff8f5;
+    --color-bg-alt: #ffeae0;
+    --color-text: #4a2c2a;
+    --color-text-light: #8a6866;
+    --color-accent: #d43d3d;
+    --color-accent-light: #ea8a8a;
+    --color-gold: #c73030;
+}
+
+/* Theme-specific decorations */
+/* Red theme: Replace sparkles with Chinese knots/lanterns feeling */
+body[data-theme="red"] .sparkle {
+    color: #d43d3d;
+    font-size: 20px;
+}
+
+body[data-theme="red"] .heart {
+    color: #d43d3d;
+}
+
+/* Blue theme: More elegant and minimalist */
+body[data-theme="blue"] .sparkle {
+    color: #5a8db8;
+}
+
+/* Pink theme: Romantic roses */
+body[data-theme="pink"] .sparkle {
+    color: #d87d99;
+}
+
+/* Green theme: Nature-inspired */
+body[data-theme="green"] .sparkle {
+    color: #7fa878;
+}
+
+/* Lavender theme: Dreamy */
+body[data-theme="lavender"] .sparkle {
+    color: #9b7bc7;
+}
+
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;

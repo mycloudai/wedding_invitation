@@ -57,6 +57,11 @@ function copyText(text) {
     }
 }
 
+function copyInviteMessage(name, url) {
+    const message = generateInviteMessage(name, url);
+    copyText(message);
+}
+
 // ---------- Add Guest ----------
 document.getElementById('add-guest-form').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -121,6 +126,7 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
         '<td class="td-actions">' +
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
             '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
+            '<button class="btn btn-sm btn-outline" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
             '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
     tbody.prepend(tr);
@@ -171,6 +177,7 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
         '<td class="td-actions">' +
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
             '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
+            '<button class="btn btn-sm btn-outline" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
             '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
 }
@@ -313,6 +320,70 @@ window.closeGuestDialog = function() {
     let dialog = document.getElementById('guest-list-dialog-overlay');
     if (dialog) dialog.remove();
 }
+
+// ---------- Theme Management ----------
+let currentTheme = 'classic';
+
+// Load current theme on page load
+async function loadCurrentTheme() {
+    try {
+        const resp = await fetch('/api/theme');
+        const data = await resp.json();
+        currentTheme = data.theme || 'classic';
+        updateThemeUI(currentTheme);
+    } catch (err) {
+        console.error('Failed to load theme:', err);
+    }
+}
+
+function updateThemeUI(theme) {
+    // Update active state
+    document.querySelectorAll('.theme-option').forEach(function(option) {
+        if (option.dataset.theme === theme) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
+}
+
+window.selectTheme = async function(theme) {
+    if (theme === currentTheme) return;
+
+    try {
+        const resp = await fetch('/api/theme', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ theme: theme })
+        });
+        const data = await resp.json();
+
+        if (data.ok) {
+            currentTheme = theme;
+            updateThemeUI(theme);
+            showToast('主题已更换为：' + getThemeName(theme));
+        } else {
+            showToast('更换主题失败');
+        }
+    } catch (err) {
+        showToast('网络错误');
+    }
+}
+
+function getThemeName(theme) {
+    const names = {
+        'classic': '经典米色',
+        'pink': '浪漫粉色',
+        'blue': '优雅蓝色',
+        'green': '清新绿色',
+        'lavender': '薰衣草紫',
+        'red': '喜庆红色'
+    };
+    return names[theme] || theme;
+}
+
+// Load theme on page load
+loadCurrentTheme();
 
 // Export attending guests
 window.exportAttendingGuests = function() {

@@ -97,11 +97,19 @@
     // ---------- Floating Petals ----------
     const petalsContainer = document.getElementById('petals-container');
 
-    // Petal colors: soft pink/rose tones
-    const petalColors = [
-        '#f4c2c2', '#f5b7b1', '#e8c4c4', '#f0d0ce',
-        '#ddc5a8', '#e6d2b5', '#f2e0d0', '#f7cac9'
-    ];
+    // Get theme-specific colors
+    function getThemeColors() {
+        const theme = document.body.dataset.theme || 'classic';
+        const themeColors = {
+            classic: ['#f4c2c2', '#f5b7b1', '#e8c4c4', '#f0d0ce', '#ddc5a8', '#e6d2b5', '#f2e0d0', '#f7cac9'],
+            pink: ['#ffc2d4', '#ffb3c6', '#ffa8c5', '#ff9ec1', '#f5a9c1', '#e899b3', '#f0b8d0', '#ffd1e0'],
+            blue: ['#a8d5f7', '#9bc7e6', '#b3d9f2', '#c2e0f5', '#aed4eb', '#9ec9e0', '#b8dcf0', '#d0e8f7'],
+            green: ['#b8e6b8', '#a8dba8', '#c1e6c1', '#d1f0d1', '#b0deb0', '#9dd39d', '#c8e8c8', '#d8f0d8'],
+            lavender: ['#d4c2f0', '#c9b8e8', '#dcc8f5', '#e6d4f7', '#d0bfeb', '#c0afe0', '#dcc8f0', '#e8d8f7'],
+            red: ['#ffb3b3', '#ffa8a8', '#ff9999', '#ff8c8c', '#f5a8a8', '#e89999', '#f0b3b3', '#ffc2c2']
+        };
+        return themeColors[theme] || themeColors.classic;
+    }
 
     function createPetal() {
         const petal = document.createElement('div');
@@ -111,6 +119,8 @@
         const left = Math.random() * 100;
         const duration = 6 + Math.random() * 8;
         const delay = Math.random() * 2;
+
+        const petalColors = getThemeColors();
         const color = petalColors[Math.floor(Math.random() * petalColors.length)];
 
         petal.style.width = size + 'px';

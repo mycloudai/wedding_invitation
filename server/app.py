@@ -118,6 +118,10 @@ def _guests_file():
     return os.path.join(DATA_DIR, "guests.json")
 
 
+def _theme_file():
+    return os.path.join(DATA_DIR, "theme.json")
+
+
 def _load_guests() -> dict:
     """Load guests with retry mechanism for concurrent access."""
     path = _guests_file()
@@ -169,6 +173,59 @@ def _save_guests(data: dict):
                 time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
             else:
                 raise  # Re-raise on final attempt
+
+
+def _load_theme() -> dict:
+    """Load theme settings from theme.json."""
+    path = _theme_file()
+    if not os.path.exists(path):
+        # First time - create default theme.json
+        default_theme = {"theme": "classic"}
+        _save_theme(default_theme)
+        return default_theme
+
+    max_retries = 5
+    retry_delay = 0.05
+
+    for attempt in range(max_retries):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                try:
+                    data = json.load(f)
+                    return data
+                finally:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+        except (IOError, json.JSONDecodeError) as e:
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay * (attempt + 1))
+            else:
+                return {"theme": "classic"}
+    return {"theme": "classic"}
+
+
+def _save_theme(data: dict):
+    """Save theme settings to theme.json with file locking."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    path = _theme_file()
+
+    max_retries = 5
+    retry_delay = 0.05
+
+    for attempt in range(max_retries):
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+                try:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+                    return
+                finally:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+        except IOError as e:
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay * (attempt + 1))
+            else:
+                raise
 
 
 # ---------------------------------------------------------------------------
@@ -239,6 +296,10 @@ def invitation(code):
     is_attending = rsvp_response.get("is_attending")
     guest_count = rsvp_response.get("guest_count", 0)
 
+    # Load theme
+    theme_data = _load_theme()
+    theme = theme_data.get("theme", "classic")
+
     return render_template(
         "invitation.html",
         config=config,
@@ -247,6 +308,7 @@ def invitation(code):
         guest_code=code,
         is_attending=is_attending,
         guest_count=guest_count,
+        theme=theme,
     )
 
 
@@ -379,6 +441,31 @@ def delete_guest(code):
     del guests[code]
     _save_guests(guests)
     return jsonify({"ok": True})
+
+
+@app.route("/api/theme", methods=["GET"])
+@admin_required
+def get_theme():
+    """Get current theme setting."""
+    theme_data = _load_theme()
+    return jsonify({"theme": theme_data.get("theme", "classic")})
+
+
+@app.route("/api/theme", methods=["POST"])
+@admin_required
+def set_theme():
+    """Set theme."""
+    data = request.get_json(force=True)
+    theme = data.get("theme", "classic")
+
+    valid_themes = ["classic", "pink", "blue", "green", "lavender", "red"]
+    if theme not in valid_themes:
+        return jsonify({"error": "Invalid theme"}), 400
+
+    theme_data = {"theme": theme}
+    _save_theme(theme_data)
+
+    return jsonify({"ok": True, "theme": theme})
 
 
 # ---------------------------------------------------------------------------

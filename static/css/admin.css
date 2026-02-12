@@ -440,11 +440,31 @@ input:focus {
 }
 
 /* ---------- RSVP Statistics ---------- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+.stats-grid-wrapper {
     margin-top: 20px;
+}
+
+.stats-group {
+    margin-bottom: 24px;
+}
+
+.stats-group:last-child {
+    margin-bottom: 0;
+}
+
+.stats-group-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--color-text-light);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
 .stat-item {
@@ -468,6 +488,14 @@ input:focus {
     letter-spacing: 2px;
 }
 
+.stat-replied .stat-value {
+    color: #6b9bd1;
+}
+
+.stat-pending .stat-value {
+    color: #999;
+}
+
 .stat-attending .stat-value {
     color: #5fad56;
 }
@@ -476,14 +504,18 @@ input:focus {
     color: #c0756e;
 }
 
+.stat-ceremony .stat-value {
+    color: #9b7bc7;
+}
+
 .stat-total .stat-value {
     color: var(--color-accent);
 }
 
 @media (max-width: 600px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 }
 
@@ -518,4 +550,98 @@ input:focus {
 
 .guest-count-none {
     color: var(--color-text-light);
+}
+
+/* ---------- Theme Selector ---------- */
+.theme-selector {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.theme-option {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.theme-option:hover {
+    transform: translateY(-4px);
+}
+
+.theme-option.active .theme-preview {
+    border: 3px solid var(--color-accent);
+    box-shadow: 0 4px 16px rgba(192, 149, 110, 0.3);
+}
+
+.theme-preview {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    border: 2px solid var(--color-border);
+    margin-bottom: 8px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-preview::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--theme-bg) 0%, var(--theme-accent) 100%);
+}
+
+.theme-classic {
+    --theme-bg: #faf8f5;
+    --theme-accent: #c0956e;
+}
+
+.theme-pink {
+    --theme-bg: #fef5f8;
+    --theme-accent: #d87d99;
+}
+
+.theme-blue {
+    --theme-bg: #f5f8fa;
+    --theme-accent: #5a8db8;
+}
+
+.theme-green {
+    --theme-bg: #f7faf5;
+    --theme-accent: #7fa878;
+}
+
+.theme-lavender {
+    --theme-bg: #f9f7fc;
+    --theme-accent: #9b7bc7;
+}
+
+.theme-red {
+    --theme-bg: #fff8f5;
+    --theme-accent: #d43d3d;
+}
+
+.theme-option span {
+    font-size: 13px;
+    color: var(--color-text);
+    letter-spacing: 1px;
+}
+
+@media (max-width: 600px) {
+    .theme-selector {
+        gap: 12px;
+    }
+
+    .theme-option {
+        min-width: 90px;
+    }
+
+    .theme-preview {
+        height: 60px;
+    }
 }
