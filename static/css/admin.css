@@ -422,6 +422,13 @@ input:focus {
     display: block;
 }
 
+.dropdown-menu.dropup {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
 .dropdown-item {
     display: block;
     padding: 8px 16px;

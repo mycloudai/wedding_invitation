@@ -31,11 +31,23 @@ window.toggleDropdown = function(code) {
     // Close all other dropdowns
     document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
         menu.classList.remove('show');
+        menu.classList.remove('dropup');
     });
 
     // Toggle current dropdown
     if (!isShowing) {
         dropdown.classList.add('show');
+
+        // Check if dropdown would go off screen
+        setTimeout(function() {
+            const rect = dropdown.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // If dropdown bottom is below viewport, show it upwards
+            if (rect.bottom > viewportHeight - 20) {
+                dropdown.classList.add('dropup');
+            }
+        }, 0);
     }
 }
 
@@ -193,9 +205,11 @@ window.editGuestName = function(code) {
 
     const nameDisplay = tr.querySelector('.guest-name-display');
     const nameInput = tr.querySelector('.guest-name-input');
-    const editBtn = tr.querySelector('.btn-edit');
     const saveBtn = tr.querySelector('.btn-save');
     const cancelBtn = tr.querySelector('.btn-cancel');
+    const dropdown = tr.querySelector('.dropdown');
+    const openBtn = tr.querySelector('a[target="_blank"]');
+    const copyBtn = tr.querySelectorAll('.btn-accent')[0];
 
     // Switch to edit mode
     nameDisplay.style.display = 'none';
@@ -203,7 +217,12 @@ window.editGuestName = function(code) {
     nameInput.focus();
     nameInput.select();
 
-    editBtn.style.display = 'none';
+    // Hide normal buttons
+    if (dropdown) dropdown.style.display = 'none';
+    if (openBtn) openBtn.style.display = 'none';
+    if (copyBtn) copyBtn.style.display = 'none';
+
+    // Show edit buttons
     saveBtn.style.display = '';
     cancelBtn.style.display = '';
 
@@ -225,9 +244,11 @@ window.cancelEditGuestName = function(code) {
 
     const nameDisplay = tr.querySelector('.guest-name-display');
     const nameInput = tr.querySelector('.guest-name-input');
-    const editBtn = tr.querySelector('.btn-edit');
     const saveBtn = tr.querySelector('.btn-save');
     const cancelBtn = tr.querySelector('.btn-cancel');
+    const dropdown = tr.querySelector('.dropdown');
+    const openBtn = tr.querySelector('a[target="_blank"]');
+    const copyBtn = tr.querySelectorAll('.btn-accent')[0];
 
     // Reset input to original value
     nameInput.value = nameDisplay.textContent;
@@ -236,7 +257,12 @@ window.cancelEditGuestName = function(code) {
     nameDisplay.style.display = '';
     nameInput.style.display = 'none';
 
-    editBtn.style.display = '';
+    // Show normal buttons
+    if (dropdown) dropdown.style.display = '';
+    if (openBtn) openBtn.style.display = '';
+    if (copyBtn) copyBtn.style.display = '';
+
+    // Hide edit buttons
     saveBtn.style.display = 'none';
     cancelBtn.style.display = 'none';
 }
