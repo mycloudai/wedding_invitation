@@ -2,6 +2,8 @@ import os
 import json
 import uuid
 import functools
+import time
+import fcntl
 from pathlib import Path
 from flask import (
     Flask,
@@ -88,6 +90,17 @@ def get_config():
         "bgm_filename": os.environ.get("BGM_FILENAME", "bgm.ogg"),
         # Admin
         "admin_password": os.environ.get("ADMIN_PASSWORD", "admin123"),
+        # RSVP
+        "rsvp_title": os.environ.get("RSVP_TITLE", "期待您的回复"),
+        "rsvp_subtitle": os.environ.get("RSVP_SUBTITLE", "请告知我们您是否能够出席"),
+        "rsvp_question": os.environ.get("RSVP_QUESTION", "您是否能够出席我们的婚礼？"),
+        "rsvp_yes_text": os.environ.get("RSVP_YES_TEXT", "我会参加"),
+        "rsvp_no_text": os.environ.get("RSVP_NO_TEXT", "无法出席"),
+        "rsvp_guest_count_label": os.environ.get("RSVP_GUEST_COUNT_LABEL", "请选择参加人数："),
+        "rsvp_submit_text": os.environ.get("RSVP_SUBMIT_TEXT", "确认提交"),
+        "rsvp_change_text": os.environ.get("RSVP_CHANGE_TEXT", "修改回复"),
+        "rsvp_thank_you": os.environ.get("RSVP_THANK_YOU", "感谢您来见证我们的幸福时刻！"),
+        "rsvp_regret": os.environ.get("RSVP_REGRET", "很遗憾您无法出席。"),
     }
 
 
@@ -106,17 +119,56 @@ def _guests_file():
 
 
 def _load_guests() -> dict:
+    """Load guests with retry mechanism for concurrent access."""
     path = _guests_file()
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+    if not os.path.exists(path):
+        return {}
+
+    max_retries = 5
+    retry_delay = 0.05  # 50ms
+
+    for attempt in range(max_retries):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                # Acquire shared lock for reading
+                fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                try:
+                    data = json.load(f)
+                    return data
+                finally:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+        except (IOError, json.JSONDecodeError) as e:
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
+            else:
+                # Last attempt failed, return empty dict
+                return {}
     return {}
 
 
 def _save_guests(data: dict):
+    """Save guests with retry mechanism and file locking."""
     os.makedirs(DATA_DIR, exist_ok=True)
-    with open(_guests_file(), "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    path = _guests_file()
+
+    max_retries = 5
+    retry_delay = 0.05  # 50ms
+
+    for attempt in range(max_retries):
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                # Acquire exclusive lock for writing
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+                try:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+                    return  # Success
+                finally:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+        except IOError as e:
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
+            else:
+                raise  # Re-raise on final attempt
 
 
 # ---------------------------------------------------------------------------
@@ -181,12 +233,58 @@ def invitation(code):
     config = get_config()
     config["invite_text_rendered"] = config["invite_text"].format(**config)
     invite_ceremony = guest.get("ceremony", False)
+
+    # Load RSVP response if exists
+    rsvp_response = guest.get("rsvp", {})
+    is_attending = rsvp_response.get("is_attending")
+    guest_count = rsvp_response.get("guest_count", 0)
+
     return render_template(
         "invitation.html",
         config=config,
         guest_name=guest["name"],
         invite_ceremony=invite_ceremony,
+        guest_code=code,
+        is_attending=is_attending,
+        guest_count=guest_count,
     )
+
+
+@app.route("/api/rsvp/<code>", methods=["POST"])
+def submit_rsvp(code):
+    """Submit or update RSVP response for a guest."""
+    guests = _load_guests()
+    guest = guests.get(code)
+    if not guest:
+        return jsonify({"error": "无效的邀请码"}), 404
+
+    data = request.get_json(force=True)
+    is_attending = data.get("is_attending")
+
+    if is_attending is None:
+        return jsonify({"error": "请选择是否参加"}), 400
+
+    guest_count = 0
+    if is_attending:
+        guest_count = int(data.get("guest_count", 1))
+        if guest_count < 1 or guest_count > 5:
+            return jsonify({"error": "参加人数必须在1-5人之间"}), 400
+
+    # Update guest RSVP
+    guests[code]["rsvp"] = {
+        "is_attending": is_attending,
+        "guest_count": guest_count,
+    }
+    _save_guests(guests)
+
+    config = get_config()
+    message = f"{config['groom_name']} & {config['bride_name']} {config['rsvp_thank_you']}" if is_attending else config['rsvp_regret']
+    return jsonify({
+        "ok": True,
+        "is_attending": is_attending,
+        "guest_count": guest_count,
+        "message": message,
+    })
 
 
 # ---------------------------------------------------------------------------

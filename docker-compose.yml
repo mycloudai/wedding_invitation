@@ -42,6 +42,18 @@ services:
       # - VENUE_LABEL=婚宴地点
       # - CLOSING_TEXT=你们的到来\n是我们最大的幸福
       # - FOOTER_TEXT=期待与您共同见证这美好时刻
+
+      # ---- RSVP 回复功能文案（可选） ----
+      # - RSVP_TITLE=期待您的回复
+      # - RSVP_SUBTITLE=请告知我们您是否能够出席
+      # - RSVP_QUESTION=您是否能够出席我们的婚礼？
+      # - RSVP_YES_TEXT=我会参加
+      # - RSVP_NO_TEXT=无法出席
+      # - RSVP_GUEST_COUNT_LABEL=请选择参加人数：
+      # - RSVP_SUBMIT_TEXT=确认提交
+      # - RSVP_CHANGE_TEXT=修改回复
+      # - RSVP_THANK_YOU=感谢您来见证我们的幸福时刻！
+      # - RSVP_REGRET=很遗憾您无法出席。
     restart: unless-stopped
 
 volumes:

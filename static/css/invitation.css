@@ -371,6 +371,8 @@ body {
     width: auto;
     display: block;
     filter: brightness(0.95) saturate(1);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 @keyframes cover-zoom {
@@ -748,6 +750,198 @@ body {
     font-weight: 300;
     letter-spacing: 3px;
     color: var(--color-text-light);
+}
+
+/* ---------- RSVP Section ---------- */
+.section-rsvp {
+    background: var(--color-bg);
+    padding: 60px 24px 80px;
+}
+
+.rsvp-subtitle {
+    text-align: center;
+    color: var(--color-text-light);
+    font-size: 14px;
+    margin-top: -8px;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.rsvp-question {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+}
+
+.rsvp-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.rsvp-btn {
+    flex: 1;
+    max-width: 160px;
+    padding: 16px 24px;
+    border: 2px solid var(--color-accent-light);
+    border-radius: 12px;
+    background: var(--color-white);
+    color: var(--color-text);
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.rsvp-btn .btn-icon {
+    font-size: 24px;
+}
+
+.rsvp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(192, 149, 110, 0.2);
+}
+
+.rsvp-btn.active {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-white);
+}
+
+.rsvp-yes.active {
+    background: #a8d08d;
+    border-color: #a8d08d;
+}
+
+.rsvp-no.active {
+    background: #d8a8a8;
+    border-color: #d8a8a8;
+}
+
+.rsvp-guest-count {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rsvp-guest-count label {
+    display: block;
+    font-size: 15px;
+    color: var(--color-text);
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.guest-count-select {
+    padding: 12px 20px;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    border: 2px solid var(--color-accent-light);
+    border-radius: 8px;
+    background: var(--color-white);
+    color: var(--color-text);
+    cursor: pointer;
+    min-width: 120px;
+    transition: all 0.3s ease;
+}
+
+.guest-count-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.rsvp-submit {
+    display: block;
+    margin: 0 auto;
+    padding: 14px 48px;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: var(--color-white);
+    background: var(--color-accent);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: slideDown 0.3s ease;
+}
+
+.rsvp-submit:hover {
+    background: var(--color-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(192, 149, 110, 0.3);
+}
+
+.rsvp-message {
+    text-align: center;
+    padding: 32px 24px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    border: 2px solid var(--color-accent-light);
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.rsvp-message-icon {
+    font-size: 48px;
+    color: var(--color-accent);
+    margin-bottom: 16px;
+}
+
+.rsvp-message p {
+    font-size: 18px;
+    color: var(--color-text);
+    margin-bottom: 24px;
+    line-height: 1.8;
+}
+
+.rsvp-change {
+    padding: 10px 32px;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--color-accent);
+    background: transparent;
+    border: 1px solid var(--color-accent-light);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.rsvp-change:hover {
+    background: var(--color-accent);
+    color: var(--color-white);
+    border-color: var(--color-accent);
 }
 
 /* ---------- Desktop tweaks (still mobile-first) ---------- */

@@ -197,4 +197,116 @@
         }
     });
 
+    // ---------- RSVP Functionality ----------
+    const rsvpForm = document.getElementById('rsvp-form');
+    const rsvpMessage = document.getElementById('rsvp-message');
+    const rsvpYesBtn = document.getElementById('rsvp-yes');
+    const rsvpNoBtn = document.getElementById('rsvp-no');
+    const guestCountSection = document.getElementById('guest-count-section');
+    const guestCountSelect = document.getElementById('guest-count');
+    const rsvpSubmitBtn = document.getElementById('rsvp-submit');
+    const rsvpMessageText = document.getElementById('rsvp-message-text');
+    const rsvpChangeBtn = document.getElementById('rsvp-change');
+
+    let selectedAttending = null;
+
+    // Check if user has already responded
+    if (typeof IS_ATTENDING !== 'undefined' && IS_ATTENDING !== null) {
+        showRsvpMessage(IS_ATTENDING, GUEST_COUNT);
+    }
+
+    // Handle RSVP button clicks
+    rsvpYesBtn.addEventListener('click', function () {
+        selectAttending(true);
+    });
+
+    rsvpNoBtn.addEventListener('click', function () {
+        selectAttending(false);
+    });
+
+    function selectAttending(willAttend) {
+        selectedAttending = willAttend;
+
+        // Update button states
+        rsvpYesBtn.classList.toggle('active', willAttend === true);
+        rsvpNoBtn.classList.toggle('active', willAttend === false);
+
+        // Show guest count selector if attending
+        if (willAttend) {
+            guestCountSection.style.display = 'block';
+            // Pre-select previous count if exists
+            if (typeof GUEST_COUNT !== 'undefined' && GUEST_COUNT > 0) {
+                guestCountSelect.value = GUEST_COUNT;
+            }
+        } else {
+            guestCountSection.style.display = 'none';
+        }
+
+        // Show submit button
+        rsvpSubmitBtn.style.display = 'block';
+    }
+
+    // Handle RSVP submission
+    rsvpSubmitBtn.addEventListener('click', function () {
+        const guestCount = selectedAttending ? parseInt(guestCountSelect.value) : 0;
+
+        // Disable button during submission
+        rsvpSubmitBtn.disabled = true;
+        rsvpSubmitBtn.textContent = '提交中...';
+
+        // Submit to API
+        fetch('/api/rsvp/' + GUEST_CODE, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                is_attending: selectedAttending,
+                guest_count: guestCount
+            })
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.ok) {
+                showRsvpMessage(data.is_attending, data.guest_count);
+                rsvpMessageText.textContent = data.message;
+            } else {
+                alert('提交失败：' + (data.error || '未知错误'));
+                rsvpSubmitBtn.disabled = false;
+                rsvpSubmitBtn.textContent = CONFIG.rsvpSubmitText || '确认提交';
+            }
+        })
+        .catch(function (error) {
+            alert('提交失败，请重试');
+            rsvpSubmitBtn.disabled = false;
+            rsvpSubmitBtn.textContent = CONFIG.rsvpSubmitText || '确认提交';
+        });
+    });
+
+    function showRsvpMessage(isAttending, guestCount) {
+        rsvpForm.style.display = 'none';
+        rsvpMessage.style.display = 'block';
+
+        const message = isAttending
+            ? CONFIG.groomName + ' & ' + CONFIG.brideName + ' ' + CONFIG.rsvpThankYou + '\n您已确认' + guestCount + '人参加。'
+            : CONFIG.rsvpRegret;
+
+        rsvpMessageText.textContent = message;
+    }
+
+    // Handle change RSVP
+    rsvpChangeBtn.addEventListener('click', function () {
+        rsvpForm.style.display = 'block';
+        rsvpMessage.style.display = 'none';
+        rsvpSubmitBtn.disabled = false;
+        rsvpSubmitBtn.textContent = CONFIG.rsvpSubmitText || '确认提交';
+
+        // Pre-select previous response
+        if (typeof IS_ATTENDING !== 'undefined' && IS_ATTENDING !== null) {
+            selectAttending(IS_ATTENDING);
+        }
+    });
+
 })();

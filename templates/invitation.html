@@ -196,6 +196,65 @@
         </div>
     </section>
 
+    <!-- ===== Section 4: RSVP ===== -->
+    <section class="section section-rsvp" id="rsvp">
+        <div class="section-inner fade-in">
+            <div class="ornament-line">
+                <span class="ornament-dot"></span>
+                <span class="ornament-text">✦</span>
+                <span class="ornament-dot"></span>
+            </div>
+            <h2 class="section-title">{{ config.rsvp_title }}</h2>
+            <p class="rsvp-subtitle">{{ config.rsvp_subtitle }}</p>
+
+            <div class="rsvp-form" id="rsvp-form">
+                <div class="rsvp-question">{{ config.rsvp_question }}</div>
+                <div class="rsvp-buttons">
+                    <button class="rsvp-btn rsvp-yes" id="rsvp-yes" data-attending="true">
+                        <span class="btn-icon">✓</span>
+                        <span>{{ config.rsvp_yes_text }}</span>
+                    </button>
+                    <button class="rsvp-btn rsvp-no" id="rsvp-no" data-attending="false">
+                        <span class="btn-icon">✗</span>
+                        <span>{{ config.rsvp_no_text }}</span>
+                    </button>
+                </div>
+
+                <div class="rsvp-guest-count" id="guest-count-section" style="display: none;">
+                    <label for="guest-count">{{ config.rsvp_guest_count_label }}</label>
+                    <select id="guest-count" class="guest-count-select">
+                        <option value="1">1人</option>
+                        <option value="2">2人</option>
+                        <option value="3">3人</option>
+                        <option value="4">4人</option>
+                        <option value="5">5人</option>
+                    </select>
+                </div>
+
+                <button class="rsvp-submit" id="rsvp-submit" style="display: none;">{{ config.rsvp_submit_text }}</button>
+            </div>
+
+            <div class="rsvp-message" id="rsvp-message" style="display: none;">
+                <div class="rsvp-message-icon">♥</div>
+                <p id="rsvp-message-text"></p>
+                <button class="rsvp-change" id="rsvp-change">{{ config.rsvp_change_text }}</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Pass data to JS
+        const GUEST_CODE = {{ guest_code | tojson }};
+        const IS_ATTENDING = {{ is_attending | tojson }};
+        const GUEST_COUNT = {{ guest_count | tojson }};
+        const CONFIG = {
+            groomName: {{ config.groom_name | tojson }},
+            brideName: {{ config.bride_name | tojson }},
+            rsvpThankYou: {{ config.rsvp_thank_you | tojson }},
+            rsvpRegret: {{ config.rsvp_regret | tojson }},
+            rsvpSubmitText: {{ config.rsvp_submit_text | tojson }}
+        };
+    </script>
     <script src="{{ url_for('static', filename='js/invitation.js') }}"></script>
 </body>
 </html>

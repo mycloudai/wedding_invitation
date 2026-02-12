@@ -32,10 +32,14 @@ function copyMessage() {
 }
 
 function generateInviteMessage(name, url) {
-    return '致' + name + '，期待您来参加' +
-        WEDDING_CONFIG.groomName + '&' + WEDDING_CONFIG.brideName +
-        '的婚礼，这是我们给你准备的专属电子邀请函' +
-        '（如果微信QQ无法直接打开，可以复制链接，使用浏览器打开）：' + url;
+    return '致' + name + '，\n\n' +
+        '诚挚邀请您参加' + WEDDING_CONFIG.groomName + ' & ' + WEDDING_CONFIG.brideName + '的婚礼！\n\n' +
+        '这是为您准备的专属电子邀请函：\n' +
+        url + '\n\n' +
+        '请在邀请函中填写您是否出席以及出席人数，\n' +
+        '以便我们更好地安排婚礼事宜。\n\n' +
+        '温馨提示：\n' +
+        '如果微信/QQ无法直接打开，请复制链接使用浏览器打开。';
 }
 
 function copyText(text) {
@@ -111,9 +115,11 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
     tr.innerHTML =
         '<td class="td-name">' + escapeHtml(name) + '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
-        '<td class="td-url"><a href="' + shortUrl + '" target="_blank">' + shortUrl + '</a></td>' +
+        '<td class="td-rsvp"><span class="badge badge-pending">未回复</span></td>' +
+        '<td class="td-count"><span class="guest-count-none">-</span></td>' +
         '<td class="td-actions">' +
-            '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制</button>' +
+            '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
+            '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
             '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
     tbody.prepend(tr);
@@ -149,12 +155,21 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
     const ceremonyBadge = ceremony
         ? '<span class="badge badge-yes">✓ 参加</span>'
         : '<span class="badge badge-no">–</span>';
+
+    // Keep existing RSVP status if available
+    const rsvpCell = tr.querySelector('.td-rsvp');
+    const rsvpHtml = rsvpCell ? rsvpCell.innerHTML : '<span class="badge badge-pending">未回复</span>';
+    const countCell = tr.querySelector('.td-count');
+    const countHtml = countCell ? countCell.innerHTML : '<span class="guest-count-none">-</span>';
+
     tr.innerHTML =
         '<td class="td-name">' + escapeHtml(name) + '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
-        '<td class="td-url"><a href="' + shortUrl + '" target="_blank">' + shortUrl + '</a></td>' +
+        '<td class="td-rsvp">' + rsvpHtml + '</td>' +
+        '<td class="td-count">' + countHtml + '</td>' +
         '<td class="td-actions">' +
-            '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制</button>' +
+            '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
+            '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
             '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
 }
