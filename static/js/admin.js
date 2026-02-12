@@ -119,7 +119,10 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
     const tr = document.createElement('tr');
     tr.setAttribute('data-code', code);
     tr.innerHTML =
-        '<td class="td-name">' + escapeHtml(name) + '</td>' +
+        '<td class="td-name">' +
+            '<span class="guest-name-display">' + escapeHtml(name) + '</span>' +
+            '<input type="text" class="guest-name-input" value="' + escapeHtml(name) + '" style="display:none;">' +
+        '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
         '<td class="td-rsvp"><span class="badge badge-pending">未回复</span></td>' +
         '<td class="td-count"><span class="guest-count-none">-</span></td>' +
@@ -127,12 +130,106 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
             '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
             '<button class="btn btn-sm btn-outline" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
+            '<button class="btn btn-sm btn-outline btn-edit" onclick="editGuestName(\'' + code + '\')">编辑名字</button>' +
+            '<button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName(\'' + code + '\')" style="display:none;">保存</button>' +
+            '<button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName(\'' + code + '\')" style="display:none;">取消</button>' +
             '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
     tbody.prepend(tr);
 
     // Update count
     updateCount(1);
+}
+
+// ---------- Edit Guest Name ----------
+window.editGuestName = function(code) {
+    const tr = document.querySelector('tr[data-code="' + code + '"]');
+    if (!tr) return;
+
+    const nameDisplay = tr.querySelector('.guest-name-display');
+    const nameInput = tr.querySelector('.guest-name-input');
+    const editBtn = tr.querySelector('.btn-edit');
+    const saveBtn = tr.querySelector('.btn-save');
+    const cancelBtn = tr.querySelector('.btn-cancel');
+
+    // Switch to edit mode
+    nameDisplay.style.display = 'none';
+    nameInput.style.display = '';
+    nameInput.focus();
+    nameInput.select();
+
+    editBtn.style.display = 'none';
+    saveBtn.style.display = '';
+    cancelBtn.style.display = '';
+
+    // Add keyboard handlers
+    nameInput.onkeydown = function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveGuestName(code);
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cancelEditGuestName(code);
+        }
+    };
+}
+
+window.cancelEditGuestName = function(code) {
+    const tr = document.querySelector('tr[data-code="' + code + '"]');
+    if (!tr) return;
+
+    const nameDisplay = tr.querySelector('.guest-name-display');
+    const nameInput = tr.querySelector('.guest-name-input');
+    const editBtn = tr.querySelector('.btn-edit');
+    const saveBtn = tr.querySelector('.btn-save');
+    const cancelBtn = tr.querySelector('.btn-cancel');
+
+    // Reset input to original value
+    nameInput.value = nameDisplay.textContent;
+
+    // Switch back to display mode
+    nameDisplay.style.display = '';
+    nameInput.style.display = 'none';
+
+    editBtn.style.display = '';
+    saveBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+}
+
+window.saveGuestName = async function(code) {
+    const tr = document.querySelector('tr[data-code="' + code + '"]');
+    if (!tr) return;
+
+    const nameInput = tr.querySelector('.guest-name-input');
+    const newName = nameInput.value.trim();
+
+    if (!newName) {
+        alert('请输入宾客姓名');
+        return;
+    }
+
+    try {
+        const resp = await fetch('/api/guests/' + code, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+        });
+        const data = await resp.json();
+
+        if (data.ok) {
+            const nameDisplay = tr.querySelector('.guest-name-display');
+            nameDisplay.textContent = newName;
+
+            // Switch back to display mode
+            cancelEditGuestName(code);
+
+            showToast('名字已更新');
+        } else {
+            showToast(data.error || '更新失败');
+        }
+    } catch (err) {
+        showToast('网络错误');
+    }
 }
 
 // ---------- Delete Guest ----------
@@ -170,7 +267,10 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
     const countHtml = countCell ? countCell.innerHTML : '<span class="guest-count-none">-</span>';
 
     tr.innerHTML =
-        '<td class="td-name">' + escapeHtml(name) + '</td>' +
+        '<td class="td-name">' +
+            '<span class="guest-name-display">' + escapeHtml(name) + '</span>' +
+            '<input type="text" class="guest-name-input" value="' + escapeHtml(name) + '" style="display:none;">' +
+        '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
         '<td class="td-rsvp">' + rsvpHtml + '</td>' +
         '<td class="td-count">' + countHtml + '</td>' +
@@ -178,6 +278,9 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
             '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
             '<button class="btn btn-sm btn-outline" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
+            '<button class="btn btn-sm btn-outline btn-edit" onclick="editGuestName(\'' + code + '\')">编辑名字</button>' +
+            '<button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName(\'' + code + '\')" style="display:none;">保存</button>' +
+            '<button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName(\'' + code + '\')" style="display:none;">取消</button>' +
             '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
 }

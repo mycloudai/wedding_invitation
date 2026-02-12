@@ -151,7 +151,10 @@
                     <tbody>
                         {% for code, info in guests.items() %}
                         <tr data-code="{{ code }}">
-                            <td class="td-name">{{ info.name }}</td>
+                            <td class="td-name">
+                                <span class="guest-name-display">{{ info.name }}</span>
+                                <input type="text" class="guest-name-input" value="{{ info.name }}" style="display:none;">
+                            </td>
                             <td class="td-ceremony">
                                 {% if info.get('ceremony', False) %}
                                 <span class="badge badge-yes">✓ 参加</span>
@@ -181,6 +184,9 @@
                                 <a href="{{ url_for('invitation', code=code) }}" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>
                                 <button class="btn btn-sm btn-outline" onclick="copyText('{{ url_for('invitation', code=code, _external=True) }}')">复制链接</button>
                                 <button class="btn btn-sm btn-outline" onclick="copyInviteMessage('{{ info.name }}', '{{ url_for('invitation', code=code, _external=True) }}')">复制邀请信息</button>
+                                <button class="btn btn-sm btn-outline btn-edit" onclick="editGuestName('{{ code }}')">编辑名字</button>
+                                <button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName('{{ code }}')" style="display:none;">保存</button>
+                                <button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName('{{ code }}')" style="display:none;">取消</button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteGuest('{{ code }}')">删除</button>
                             </td>
                         </tr>

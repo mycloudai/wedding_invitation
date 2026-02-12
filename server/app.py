@@ -443,6 +443,31 @@ def delete_guest(code):
     return jsonify({"ok": True})
 
 
+@app.route("/api/guests/<code>", methods=["PATCH"])
+@admin_required
+def update_guest(code):
+    """Update guest name."""
+    guests = _load_guests()
+    if code not in guests:
+        return jsonify({"error": "未找到该宾客"}), 404
+
+    data = request.get_json(force=True)
+    new_name = data.get("name", "").strip()
+
+    if not new_name:
+        return jsonify({"error": "请输入宾客姓名"}), 400
+
+    guests[code]["name"] = new_name
+    _save_guests(guests)
+
+    return jsonify({
+        "ok": True,
+        "code": code,
+        "name": new_name,
+        "url": url_for("invitation", code=code, _external=True)
+    })
+
+
 @app.route("/api/theme", methods=["GET"])
 @admin_required
 def get_theme():

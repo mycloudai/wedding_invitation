@@ -338,6 +338,25 @@ input:focus {
     letter-spacing: 2px;
 }
 
+.guest-name-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--color-accent);
+    border-radius: 4px;
+    font-family: var(--font-serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    background: var(--color-card);
+}
+
+.guest-name-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(192, 149, 110, 0.1);
+}
+
 .td-url a {
     color: var(--color-accent);
     text-decoration: none;
