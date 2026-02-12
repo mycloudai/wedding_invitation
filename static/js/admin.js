@@ -36,8 +36,8 @@ function generateInviteMessage(name, url) {
         '诚挚邀请您参加' + WEDDING_CONFIG.groomName + ' & ' + WEDDING_CONFIG.brideName + '的婚礼！\n\n' +
         '这是为您准备的专属电子邀请函：\n' +
         url + '\n\n' +
-        '请在邀请函中填写您是否出席以及出席人数，\n' +
-        '以便我们更好地安排婚礼事宜。\n\n' +
+        '❗️ 请在邀请函最后部份填写您是否出席以及出席人数，\n' +
+        '以便我们更好地安排婚礼事宜。❗️\n\n' +
         '温馨提示：\n' +
         '如果微信/QQ无法直接打开，请复制链接使用浏览器打开。';
 }
