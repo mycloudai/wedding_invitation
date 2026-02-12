@@ -46,9 +46,9 @@ body {
     z-index: 9999;
     background: linear-gradient(
         135deg,
-        var(--color-bg) 0%,
-        var(--color-bg-alt) 50%,
-        rgba(192, 149, 110, 0.12) 100%
+        #faf8f5 0%,
+        #f3efe9 50%,
+        #f5f0e8 100%
     );
     display: flex;
     align-items: center;
