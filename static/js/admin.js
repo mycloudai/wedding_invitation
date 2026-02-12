@@ -21,6 +21,45 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
+// ---------- Dropdown Menu ----------
+window.toggleDropdown = function(code) {
+    const dropdown = document.getElementById('dropdown-' + code);
+    if (!dropdown) return;
+
+    const isShowing = dropdown.classList.contains('show');
+
+    // Close all other dropdowns
+    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+        menu.classList.remove('show');
+    });
+
+    // Toggle current dropdown
+    if (!isShowing) {
+        dropdown.classList.add('show');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+            menu.classList.remove('show');
+        });
+    }
+});
+
+// Prevent dropdown from closing when clicking inside
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.dropdown-item')) {
+        // Close the dropdown after action
+        setTimeout(function() {
+            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                menu.classList.remove('show');
+            });
+        }, 100);
+    }
+});
+
 // ---------- Copy ----------
 function copyUrl() {
     const input = document.getElementById('result-url');
@@ -128,12 +167,18 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
         '<td class="td-count"><span class="guest-count-none">-</span></td>' +
         '<td class="td-actions">' +
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
-            '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
-            '<button class="btn btn-sm btn-outline" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
-            '<button class="btn btn-sm btn-outline btn-edit" onclick="editGuestName(\'' + code + '\')">编辑名字</button>' +
+            '<button class="btn btn-sm btn-accent" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
+            '<div class="dropdown">' +
+                '<button class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown(\'' + code + '\')"><span>⋮</span></button>' +
+                '<div class="dropdown-menu" id="dropdown-' + code + '">' +
+                    '<a class="dropdown-item" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">📋 复制链接</a>' +
+                    '<a class="dropdown-item" onclick="editGuestName(\'' + code + '\')">✏️ 编辑名字</a>' +
+                    '<div class="dropdown-divider"></div>' +
+                    '<a class="dropdown-item dropdown-item-danger" onclick="deleteGuest(\'' + code + '\')">🗑️ 删除</a>' +
+                '</div>' +
+            '</div>' +
             '<button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName(\'' + code + '\')" style="display:none;">保存</button>' +
             '<button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName(\'' + code + '\')" style="display:none;">取消</button>' +
-            '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
     tbody.prepend(tr);
 
@@ -276,12 +321,18 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
         '<td class="td-count">' + countHtml + '</td>' +
         '<td class="td-actions">' +
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
-            '<button class="btn btn-sm btn-outline" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">复制链接</button>' +
-            '<button class="btn btn-sm btn-outline" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
-            '<button class="btn btn-sm btn-outline btn-edit" onclick="editGuestName(\'' + code + '\')">编辑名字</button>' +
+            '<button class="btn btn-sm btn-accent" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
+            '<div class="dropdown">' +
+                '<button class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown(\'' + code + '\')"><span>⋮</span></button>' +
+                '<div class="dropdown-menu" id="dropdown-' + code + '">' +
+                    '<a class="dropdown-item" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">📋 复制链接</a>' +
+                    '<a class="dropdown-item" onclick="editGuestName(\'' + code + '\')">✏️ 编辑名字</a>' +
+                    '<div class="dropdown-divider"></div>' +
+                    '<a class="dropdown-item dropdown-item-danger" onclick="deleteGuest(\'' + code + '\')">🗑️ 删除</a>' +
+                '</div>' +
+            '</div>' +
             '<button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName(\'' + code + '\')" style="display:none;">保存</button>' +
             '<button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName(\'' + code + '\')" style="display:none;">取消</button>' +
-            '<button class="btn btn-sm btn-danger" onclick="deleteGuest(\'' + code + '\')">删除</button>' +
         '</td>';
 }
 

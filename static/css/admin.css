@@ -156,6 +156,17 @@ input:focus {
     background: var(--color-accent-hover);
 }
 
+.btn-accent {
+    background: transparent;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+}
+
+.btn-accent:hover {
+    background: var(--color-accent);
+    color: #fff;
+}
+
 .btn-outline {
     background: transparent;
     border: 1px solid var(--color-border);
@@ -371,6 +382,73 @@ input:focus {
     display: flex;
     gap: 6px;
     white-space: nowrap;
+    align-items: center;
+}
+
+/* ---------- Dropdown Menu ---------- */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    min-width: 36px;
+    padding: 6px 10px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.dropdown-toggle span {
+    display: block;
+    font-weight: bold;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    z-index: 1000;
+    padding: 4px 0;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 8px 16px;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background: var(--color-bg);
+}
+
+.dropdown-item-danger {
+    color: var(--color-danger);
+}
+
+.dropdown-item-danger:hover {
+    background: rgba(192, 57, 43, 0.08);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 4px 0;
 }
 
 .empty-msg {
