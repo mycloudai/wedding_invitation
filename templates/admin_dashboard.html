@@ -151,10 +151,7 @@
                     <tbody>
                         {% for code, info in guests.items() %}
                         <tr data-code="{{ code }}">
-                            <td class="td-name">
-                                <span class="guest-name-display">{{ info.name }}</span>
-                                <input type="text" class="guest-name-input" value="{{ info.name }}" style="display:none;">
-                            </td>
+                            <td class="td-name">{{ info.name }}</td>
                             <td class="td-ceremony">
                                 {% if info.get('ceremony', False) %}
                                 <span class="badge badge-yes">✓ 参加</span>
@@ -189,13 +186,11 @@
                                     </button>
                                     <div class="dropdown-menu" id="dropdown-{{ code }}">
                                         <a class="dropdown-item" onclick="copyText('{{ url_for('invitation', code=code, _external=True) }}')">📋 复制链接</a>
-                                        <a class="dropdown-item" onclick="editGuestName('{{ code }}')">✏️ 编辑名字</a>
+                                        <a class="dropdown-item" onclick="editGuestName('{{ code }}', '{{ info.name }}')">✏️ 编辑名字</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item dropdown-item-danger" onclick="deleteGuest('{{ code }}')">🗑️ 删除</a>
                                     </div>
                                 </div>
-                                <button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName('{{ code }}')" style="display:none;">保存</button>
-                                <button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName('{{ code }}')" style="display:none;">取消</button>
                             </td>
                         </tr>
                         {% endfor %}

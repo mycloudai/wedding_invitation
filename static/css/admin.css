@@ -28,6 +28,68 @@
 .guest-list-dialog button {
     margin-top: 12px;
 }
+
+/* ---------- Edit Name Dialog ---------- */
+.edit-name-dialog {
+    background: var(--color-card);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    min-width: 360px;
+    max-width: 90%;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.edit-name-dialog h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    text-align: center;
+}
+
+.edit-name-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+}
+
+.edit-name-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(192, 149, 110, 0.1);
+}
+
+.edit-name-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.edit-name-actions .btn {
+    min-width: 80px;
+}
 .stat-link {
     cursor: pointer;
     text-decoration: underline;
@@ -347,25 +409,6 @@ input:focus {
 .td-name {
     font-weight: 600;
     letter-spacing: 2px;
-}
-
-.guest-name-input {
-    width: 100%;
-    padding: 4px 8px;
-    border: 1px solid var(--color-accent);
-    border-radius: 4px;
-    font-family: var(--font-serif);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    color: var(--color-text);
-    background: var(--color-card);
-}
-
-.guest-name-input:focus {
-    outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 2px rgba(192, 149, 110, 0.1);
 }
 
 .td-url a {

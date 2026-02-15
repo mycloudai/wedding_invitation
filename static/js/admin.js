@@ -36,18 +36,23 @@ window.toggleDropdown = function(code) {
 
     // Toggle current dropdown
     if (!isShowing) {
-        dropdown.classList.add('show');
-
-        // Check if dropdown would go off screen
-        setTimeout(function() {
-            const rect = dropdown.getBoundingClientRect();
+        // Get button position before showing dropdown
+        const button = dropdown.parentElement.querySelector('.dropdown-toggle');
+        if (button) {
+            const buttonRect = button.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
 
-            // If dropdown bottom is below viewport, show it upwards
-            if (rect.bottom > viewportHeight - 20) {
+            // Estimate dropdown height (approx 4 items * 36px + padding)
+            const estimatedDropdownHeight = 180;
+
+            // Check if dropdown would go off screen
+            // If button bottom + dropdown height > viewport height, show upwards
+            if (buttonRect.bottom + estimatedDropdownHeight > viewportHeight - 20) {
                 dropdown.classList.add('dropup');
             }
-        }, 0);
+        }
+
+        dropdown.classList.add('show');
     }
 }
 
@@ -170,10 +175,7 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
     const tr = document.createElement('tr');
     tr.setAttribute('data-code', code);
     tr.innerHTML =
-        '<td class="td-name">' +
-            '<span class="guest-name-display">' + escapeHtml(name) + '</span>' +
-            '<input type="text" class="guest-name-input" value="' + escapeHtml(name) + '" style="display:none;">' +
-        '</td>' +
+        '<td class="td-name">' + escapeHtml(name) + '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
         '<td class="td-rsvp"><span class="badge badge-pending">未回复</span></td>' +
         '<td class="td-count"><span class="guest-count-none">-</span></td>' +
@@ -184,13 +186,11 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
                 '<button class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown(\'' + code + '\')"><span>⋮</span></button>' +
                 '<div class="dropdown-menu" id="dropdown-' + code + '">' +
                     '<a class="dropdown-item" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">📋 复制链接</a>' +
-                    '<a class="dropdown-item" onclick="editGuestName(\'' + code + '\')">✏️ 编辑名字</a>' +
+                    '<a class="dropdown-item" onclick="editGuestName(\'' + code + '\', \'' + escapeHtml(name) + '\')">✏️ 编辑名字</a>' +
                     '<div class="dropdown-divider"></div>' +
                     '<a class="dropdown-item dropdown-item-danger" onclick="deleteGuest(\'' + code + '\')">🗑️ 删除</a>' +
                 '</div>' +
             '</div>' +
-            '<button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName(\'' + code + '\')" style="display:none;">保存</button>' +
-            '<button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName(\'' + code + '\')" style="display:none;">取消</button>' +
         '</td>';
     tbody.prepend(tr);
 
@@ -199,80 +199,70 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
 }
 
 // ---------- Edit Guest Name ----------
-window.editGuestName = function(code) {
-    const tr = document.querySelector('tr[data-code="' + code + '"]');
-    if (!tr) return;
+window.editGuestName = function(code, currentName) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'edit-name-modal';
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.4)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
 
-    const nameDisplay = tr.querySelector('.guest-name-display');
-    const nameInput = tr.querySelector('.guest-name-input');
-    const saveBtn = tr.querySelector('.btn-save');
-    const cancelBtn = tr.querySelector('.btn-cancel');
-    const dropdown = tr.querySelector('.dropdown');
-    const openBtn = tr.querySelector('a[target="_blank"]');
-    const copyBtn = tr.querySelectorAll('.btn-accent')[0];
+    // Create modal dialog
+    const dialog = document.createElement('div');
+    dialog.className = 'edit-name-dialog';
+    dialog.innerHTML =
+        '<h3>编辑宾客名字</h3>' +
+        '<input type="text" id="edit-name-input" class="edit-name-input" value="' + escapeHtml(currentName) + '" placeholder="请输入宾客姓名">' +
+        '<div class="edit-name-actions">' +
+            '<button class="btn btn-outline" onclick="closeEditNameModal()">取消</button>' +
+            '<button class="btn btn-primary" onclick="saveEditedName(\'' + code + '\')">保存</button>' +
+        '</div>';
 
-    // Switch to edit mode
-    nameDisplay.style.display = 'none';
-    nameInput.style.display = '';
-    nameInput.focus();
-    nameInput.select();
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
 
-    // Hide normal buttons
-    if (dropdown) dropdown.style.display = 'none';
-    if (openBtn) openBtn.style.display = 'none';
-    if (copyBtn) copyBtn.style.display = 'none';
+    // Focus and select input
+    setTimeout(function() {
+        const input = document.getElementById('edit-name-input');
+        if (input) {
+            input.focus();
+            input.select();
 
-    // Show edit buttons
-    saveBtn.style.display = '';
-    cancelBtn.style.display = '';
+            // Add keyboard handlers
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveEditedName(code);
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeEditNameModal();
+                }
+            };
+        }
+    }, 100);
 
-    // Add keyboard handlers
-    nameInput.onkeydown = function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            saveGuestName(code);
-        } else if (e.key === 'Escape') {
-            e.preventDefault();
-            cancelEditGuestName(code);
+    // Click outside to close
+    overlay.onclick = function(e) {
+        if (e.target === overlay) {
+            closeEditNameModal();
         }
     };
 }
 
-window.cancelEditGuestName = function(code) {
-    const tr = document.querySelector('tr[data-code="' + code + '"]');
-    if (!tr) return;
-
-    const nameDisplay = tr.querySelector('.guest-name-display');
-    const nameInput = tr.querySelector('.guest-name-input');
-    const saveBtn = tr.querySelector('.btn-save');
-    const cancelBtn = tr.querySelector('.btn-cancel');
-    const dropdown = tr.querySelector('.dropdown');
-    const openBtn = tr.querySelector('a[target="_blank"]');
-    const copyBtn = tr.querySelectorAll('.btn-accent')[0];
-
-    // Reset input to original value
-    nameInput.value = nameDisplay.textContent;
-
-    // Switch back to display mode
-    nameDisplay.style.display = '';
-    nameInput.style.display = 'none';
-
-    // Show normal buttons
-    if (dropdown) dropdown.style.display = '';
-    if (openBtn) openBtn.style.display = '';
-    if (copyBtn) copyBtn.style.display = '';
-
-    // Hide edit buttons
-    saveBtn.style.display = 'none';
-    cancelBtn.style.display = 'none';
+window.closeEditNameModal = function() {
+    const modal = document.getElementById('edit-name-modal');
+    if (modal) modal.remove();
 }
 
-window.saveGuestName = async function(code) {
-    const tr = document.querySelector('tr[data-code="' + code + '"]');
-    if (!tr) return;
+window.saveEditedName = async function(code) {
+    const input = document.getElementById('edit-name-input');
+    if (!input) return;
 
-    const nameInput = tr.querySelector('.guest-name-input');
-    const newName = nameInput.value.trim();
+    const newName = input.value.trim();
 
     if (!newName) {
         alert('请输入宾客姓名');
@@ -288,12 +278,16 @@ window.saveGuestName = async function(code) {
         const data = await resp.json();
 
         if (data.ok) {
-            const nameDisplay = tr.querySelector('.guest-name-display');
-            nameDisplay.textContent = newName;
+            // Update the name in the table
+            const tr = document.querySelector('tr[data-code="' + code + '"]');
+            if (tr) {
+                const nameCell = tr.querySelector('.td-name');
+                if (nameCell) {
+                    nameCell.textContent = newName;
+                }
+            }
 
-            // Switch back to display mode
-            cancelEditGuestName(code);
-
+            closeEditNameModal();
             showToast('名字已更新');
         } else {
             showToast(data.error || '更新失败');
@@ -338,10 +332,7 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
     const countHtml = countCell ? countCell.innerHTML : '<span class="guest-count-none">-</span>';
 
     tr.innerHTML =
-        '<td class="td-name">' +
-            '<span class="guest-name-display">' + escapeHtml(name) + '</span>' +
-            '<input type="text" class="guest-name-input" value="' + escapeHtml(name) + '" style="display:none;">' +
-        '</td>' +
+        '<td class="td-name">' + escapeHtml(name) + '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
         '<td class="td-rsvp">' + rsvpHtml + '</td>' +
         '<td class="td-count">' + countHtml + '</td>' +
@@ -352,13 +343,11 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
                 '<button class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown(\'' + code + '\')"><span>⋮</span></button>' +
                 '<div class="dropdown-menu" id="dropdown-' + code + '">' +
                     '<a class="dropdown-item" onclick="copyText(\'' + escapeHtml(fullUrl) + '\')">📋 复制链接</a>' +
-                    '<a class="dropdown-item" onclick="editGuestName(\'' + code + '\')">✏️ 编辑名字</a>' +
+                    '<a class="dropdown-item" onclick="editGuestName(\'' + code + '\', \'' + escapeHtml(name) + '\')">✏️ 编辑名字</a>' +
                     '<div class="dropdown-divider"></div>' +
                     '<a class="dropdown-item dropdown-item-danger" onclick="deleteGuest(\'' + code + '\')">🗑️ 删除</a>' +
                 '</div>' +
             '</div>' +
-            '<button class="btn btn-sm btn-primary btn-save" onclick="saveGuestName(\'' + code + '\')" style="display:none;">保存</button>' +
-            '<button class="btn btn-sm btn-outline btn-cancel" onclick="cancelEditGuestName(\'' + code + '\')" style="display:none;">取消</button>' +
         '</td>';
 }
 
