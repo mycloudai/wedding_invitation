@@ -1,0 +1,85 @@
+name: Build and Push to Alibaba Cloud ACR
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: '目标平台 (Target platform)'
+        required: false
+        default: 'linux/amd64'
+        type: choice
+        options:
+          - linux/amd64
+          - linux/arm64
+          - linux/amd64,linux/arm64
+
+env:
+  REGISTRY: registry.cn-shanghai.aliyuncs.com
+  NAMESPACE: jihaoyun
+  IMAGE_NAME: wedding_invitation
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (multi-platform support)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Alibaba Cloud ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+
+      - name: Determine image tags
+        id: tags
+        run: |
+          FULL_IMAGE="${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}"
+          SHORT_SHA="${GITHUB_SHA::8}"
+
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            # Tag push: use the git tag as version
+            VERSION="${GITHUB_REF#refs/tags/}"
+          else
+            # Branch push: use short commit SHA
+            VERSION="${SHORT_SHA}"
+          fi
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag_versioned=${FULL_IMAGE}:${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag_latest=${FULL_IMAGE}:latest" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ github.event.inputs.platform || 'linux/amd64' }}
+          push: true
+          tags: |
+            ${{ steps.tags.outputs.tag_versioned }}
+            ${{ steps.tags.outputs.tag_latest }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          echo "### 镜像推送成功 🎉" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| 标签 | 值 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|-----|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| 版本镜像 | \`${{ steps.tags.outputs.tag_versioned }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| latest | \`${{ steps.tags.outputs.tag_latest }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| 平台 | \`${{ github.event.inputs.platform || 'linux/amd64' }}\` |" >> "$GITHUB_STEP_SUMMARY"
