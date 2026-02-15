@@ -428,6 +428,29 @@ input:focus {
     align-items: center;
 }
 
+/* ---------- View Badge ---------- */
+.td-views {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.view-badge {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--color-accent);
+    line-height: 1.4;
+}
+
+.view-date {
+    font-size: 11px;
+    color: var(--color-text-light);
+}
+
+.view-badge-none {
+    font-size: 12px;
+    color: #ccc;
+}
+
 /* ---------- Dropdown Menu ---------- */
 .dropdown {
     position: relative;

@@ -170,6 +170,7 @@ function addGuestToTable(code, name, fullUrl, ceremony) {
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
         '<td class="td-rsvp"><span class="badge badge-pending">未回复</span></td>' +
         '<td class="td-count"><span class="guest-count-none">-</span></td>' +
+        '<td class="td-views"><span class="view-badge-none">未查看</span></td>' +
         '<td class="td-actions">' +
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
             '<button class="btn btn-sm btn-accent" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +
@@ -322,11 +323,16 @@ function updateGuestRow(code, name, fullUrl, ceremony) {
     const countCell = tr.querySelector('.td-count');
     const countHtml = countCell ? countCell.innerHTML : '<span class="guest-count-none">-</span>';
 
+    // Preserve view data if row already exists
+    const viewCell = tr.querySelector('.td-views');
+    const viewHtml = viewCell ? viewCell.innerHTML : '<span class="view-badge-none">未查看</span>';
+
     tr.innerHTML =
         '<td class="td-name">' + escapeHtml(name) + '</td>' +
         '<td class="td-ceremony">' + ceremonyBadge + '</td>' +
         '<td class="td-rsvp">' + rsvpHtml + '</td>' +
         '<td class="td-count">' + countHtml + '</td>' +
+        '<td class="td-views">' + viewHtml + '</td>' +
         '<td class="td-actions">' +
             '<a href="' + shortUrl + '" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>' +
             '<button class="btn btn-sm btn-accent" onclick="copyInviteMessage(\'' + escapeHtml(name) + '\', \'' + escapeHtml(fullUrl) + '\')">复制邀请信息</button>' +

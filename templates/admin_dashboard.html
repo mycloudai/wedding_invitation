@@ -145,6 +145,7 @@
                             <th>草坪仪式</th>
                             <th>回复状态</th>
                             <th>参加人数</th>
+                            <th>查看记录</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -175,6 +176,13 @@
                                 <span class="guest-count-badge">{{ rsvp.get('guest_count', 0) }}人</span>
                                 {% else %}
                                 <span class="guest-count-none">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="td-views">
+                                {% if info.get('view_count', 0) > 0 %}
+                                <span class="view-badge">{{ info.view_count }}次<br><span class="view-date">{{ info.first_viewed_at[:10] }}</span></span>
+                                {% else %}
+                                <span class="view-badge-none">未查看</span>
                                 {% endif %}
                             </td>
                             <td class="td-actions">

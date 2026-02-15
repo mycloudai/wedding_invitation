@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="{{ config.groom_name }}和{{ config.bride_name }}的婚礼邀请函，诚挚邀请您的到来">
     <meta name="theme-color" content="#faf8f5">
+    <!-- Open Graph（微信/微博分享预览） -->
+    <meta property="og:title" content="{{ config.groom_name }} & {{ config.bride_name }} 婚礼邀请函">
+    <meta property="og:description" content="{{ config.wedding_date }} · {{ config.wedding_venue }}{% if config.wedding_address %} · {{ config.wedding_address }}{% endif %}">
+    <meta property="og:image" content="{{ url_for('serve_photo', filename=config.cover_photo, _external=True) }}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:type" content="website">
     <title>{{ config.groom_name }} & {{ config.bride_name }} · 婚礼邀请函</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,8 +162,20 @@
                         {% if config.wedding_address %}
                         <p class="detail-address">{{ config.wedding_address }}</p>
                         {% endif %}
+                        <div class="map-links">
+                            <a href="{{ config.map_link_amap }}" target="_blank" class="map-link">高德导航</a>
+                            <span class="map-link-sep">·</span>
+                            <a href="{{ config.map_link_baidu }}" target="_blank" class="map-link">百度地图</a>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="calendar-row">
+                <a href="/i/{{ guest_code }}/calendar.ics" class="calendar-link" download="wedding.ics">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    加入日历
+                </a>
             </div>
 
             <div class="invite-sign">

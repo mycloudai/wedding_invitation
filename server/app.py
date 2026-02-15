@@ -1,10 +1,13 @@
 import os
+import re
 import json
 import uuid
 import functools
 import time
 import fcntl
+from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote
 from flask import (
     Flask,
     render_template,
@@ -15,6 +18,7 @@ from flask import (
     send_from_directory,
     session,
     abort,
+    Response,
 )
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -36,7 +40,7 @@ app.wsgi_app = ProxyFix(
 # ---------------------------------------------------------------------------
 def get_config():
     """Read all configurable values from environment variables with defaults."""
-    return {
+    config = {
         # Core info
         "groom_name": os.environ.get("GROOM_NAME", "新郎"),
         "bride_name": os.environ.get("BRIDE_NAME", "新娘"),
@@ -102,6 +106,21 @@ def get_config():
         "rsvp_thank_you": os.environ.get("RSVP_THANK_YOU", "感谢您来见证我们的幸福时刻！"),
         "rsvp_regret": os.environ.get("RSVP_REGRET", "很遗憾您无法出席。"),
     }
+
+    # Derived: map navigation links (auto-generated from venue/address, or overridden)
+    keyword = config["wedding_venue"]
+    if config["wedding_address"]:
+        keyword += " " + config["wedding_address"]
+    kw_enc = quote(keyword)
+    config["map_link_amap"] = os.environ.get(
+        "MAP_LINK_AMAP",
+        f"https://uri.amap.com/search?keyword={kw_enc}&src=webapp.wedding",
+    )
+    config["map_link_baidu"] = os.environ.get(
+        "MAP_LINK_BAIDU",
+        f"http://api.map.baidu.com/geocoder?address={kw_enc}&output=html&src=webapp.wedding",
+    )
+    return config
 
 
 # ---------------------------------------------------------------------------
@@ -287,6 +306,14 @@ def invitation(code):
     guest = guests.get(code)
     if not guest:
         abort(404)
+
+    # Track visit
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+    if not guest.get("first_viewed_at"):
+        guests[code]["first_viewed_at"] = now
+    guests[code]["view_count"] = guest.get("view_count", 0) + 1
+    _save_guests(guests)
+
     config = get_config()
     config["invite_text_rendered"] = config["invite_text"].format(**config)
     invite_ceremony = guest.get("ceremony", False)
@@ -441,6 +468,67 @@ def delete_guest(code):
     del guests[code]
     _save_guests(guests)
     return jsonify({"ok": True})
+
+
+@app.route("/i/<code>/calendar.ics")
+def download_calendar(code):
+    """Generate an ICS calendar file for the wedding event."""
+    guests = _load_guests()
+    if code not in guests:
+        abort(404)
+    config = get_config()
+
+    # Parse wedding date from Chinese format (2026年10月01日) or ISO env override
+    date_iso = os.environ.get("WEDDING_DATE_ISO", "")
+    if date_iso:
+        try:
+            parts = date_iso.split("-")
+            year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+        except (ValueError, IndexError):
+            abort(400)
+    else:
+        m = re.match(r"(\d{4})年(\d{1,2})月(\d{1,2})日", config["wedding_date"])
+        if not m:
+            abort(400)
+        year, month, day = int(m.group(1)), int(m.group(2)), int(m.group(3))
+
+    try:
+        hour, minute = map(int, config["banquet_time"].split(":"))
+    except ValueError:
+        hour, minute = 18, 0
+
+    dtstart = f"{year:04d}{month:02d}{day:02d}T{hour:02d}{minute:02d}00"
+    dtend   = f"{year:04d}{month:02d}{day:02d}T{(hour+3)%24:02d}{minute:02d}00"
+
+    venue    = config["wedding_venue"]
+    address  = config.get("wedding_address", "")
+    location = (venue + " " + address).strip()
+
+    def esc(s):
+        return s.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
+
+    ics = (
+        "BEGIN:VCALENDAR\r\n"
+        "VERSION:2.0\r\n"
+        "PRODID:-//Wedding Invitation//CN\r\n"
+        "CALSCALE:GREGORIAN\r\n"
+        "METHOD:PUBLISH\r\n"
+        "BEGIN:VEVENT\r\n"
+        f"UID:wedding-{code}@invitation\r\n"
+        f"DTSTART;TZID=Asia/Shanghai:{dtstart}\r\n"
+        f"DTEND;TZID=Asia/Shanghai:{dtend}\r\n"
+        f"SUMMARY:{esc(config['groom_name'] + ' & ' + config['bride_name'] + ' 婚礼')}\r\n"
+        f"LOCATION:{esc(location)}\r\n"
+        f"DESCRIPTION:{esc('诚邀您参加 ' + config['groom_name'] + ' 和 ' + config['bride_name'] + ' 的婚礼\\n' + location)}\r\n"
+        f"URL:{url_for('invitation', code=code, _external=True)}\r\n"
+        "END:VEVENT\r\n"
+        "END:VCALENDAR\r\n"
+    )
+    return Response(
+        ics,
+        mimetype="text/calendar; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="wedding.ics"'},
+    )
 
 
 @app.route("/api/guests/<code>", methods=["PATCH"])
