@@ -16,6 +16,32 @@
 - 🔧 **全环境变量配置** — 新人信息、日期、文案均可通过环境变量自定义
 - 🐳 **容器化部署** — Docker 一键启动，支持 Kubernetes 部署
 
+## 📸 截图预览
+
+### 后台管理
+
+| 登录 | 主题设置 · 生成邀请函 |
+|------|------|
+| <img src="screenshot/1-admin-portal-login.png" width="420"> | <img src="screenshot/2-creat-invitation.png" width="420"> |
+
+| 复制邀请消息 | 回复统计看板 |
+|------|------|
+| <img src="screenshot/3-copy-invitation-message-and-send.png" width="420"> | <img src="screenshot/9-admin-portal-response-overview-page.png" width="420"> |
+
+### 宾客邀请函（手机端）
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshot/4-invitation-main-page.png" width="160"><br><sub>打开邀请函</sub></td>
+    <td align="center"><img src="screenshot/5-invitation-page1.png" width="160"><br><sub>封面</sub></td>
+    <td align="center"><img src="screenshot/6-invitation-page2.png" width="160"><br><sub>邀请 & 详情</sub></td>
+    <td align="center"><img src="screenshot/7-invitation-page3.png" width="160"><br><sub>故事 & 结语</sub></td>
+    <td align="center"><img src="screenshot/8-invitation-rsvp-page.png" width="160"><br><sub>RSVP 回复</sub></td>
+  </tr>
+</table>
+
+---
+
 ## 📁 项目结构
 
 ```
@@ -58,7 +84,21 @@ wedding/
     └── photo/              # 自定义照片（优先级高于默认）
 ```
 
+## 🐳 最新镜像
+
+<!-- LATEST_IMAGE_START -->
+| 标签 | 镜像地址 |
+|------|------|
+| `latest` | `registry.cn-shanghai.aliyuncs.com/jihaoyun/wedding_invitation:latest` |
+
+*尚未构建，推送到 main 分支后自动更新*
+<!-- LATEST_IMAGE_END -->
+
 ## 🚀 快速启动
+
+> **📌 设计说明：根目录 `/` 故意返回 404。**
+> 邀请函没有公开首页——每位宾客只能通过后台生成的专属链接 `/i/<code>` 访问自己的邀请函。
+> 部署完成后，请先登录 `/admin` 管理后台，为每位宾客生成链接并发送，宾客才能打开邀请函。
 
 ### 本地调试
 
@@ -73,7 +113,6 @@ DATA_DIR=./data PHOTO_DIR=./data/photo MUSIC_DIR=./data/music python3 server/app
 ```
 
 启动后访问：
-- 邀请函首页（需先生成宾客链接）：`http://localhost:5050`
 - 管理后台：`http://localhost:5050/admin` （默认密码 `admin123`）
 
 ### Docker Compose（推荐生产部署）
@@ -86,8 +125,7 @@ DATA_DIR=./data PHOTO_DIR=./data/photo MUSIC_DIR=./data/music python3 server/app
 docker compose up -d
 ```
 
-4. 访问：
-   - 管理后台：`http://your-domain:5000/admin`
+4. 访问管理后台：`http://your-domain:5000/admin`
 
 ### Kubernetes 部署
 

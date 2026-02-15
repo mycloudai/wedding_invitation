@@ -26,6 +26,8 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to push README update back
 
     steps:
       - name: Checkout code
@@ -36,6 +38,13 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Login to Red Hat Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.redhat.io
+          username: ${{ secrets.REDHAT_USERNAME }}
+          password: ${{ secrets.REDHAT_PASSWORD }}
 
       - name: Login to Alibaba Cloud ACR
         uses: docker/login-action@v3
@@ -51,10 +60,8 @@ jobs:
           SHORT_SHA="${GITHUB_SHA::8}"
 
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            # Tag push: use the git tag as version
             VERSION="${GITHUB_REF#refs/tags/}"
           else
-            # Branch push: use short commit SHA
             VERSION="${SHORT_SHA}"
           fi
 
@@ -73,6 +80,56 @@ jobs:
             ${{ steps.tags.outputs.tag_latest }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Update README with latest image info
+        env:
+          TAG_VERSIONED: ${{ steps.tags.outputs.tag_versioned }}
+          TAG_LATEST: ${{ steps.tags.outputs.tag_latest }}
+          VERSION: ${{ steps.tags.outputs.version }}
+          PLATFORM: ${{ github.event.inputs.platform || 'linux/amd64' }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 << 'EOF'
+          import re, os
+          from datetime import datetime, timezone
+
+          tag_versioned = os.environ['TAG_VERSIONED']
+          tag_latest    = os.environ['TAG_LATEST']
+          version       = os.environ['VERSION']
+          platform      = os.environ['PLATFORM']
+          repo          = os.environ['REPO']
+          build_time    = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+
+          new_block = (
+              "<!-- LATEST_IMAGE_START -->\n"
+              "| 标签 | 镜像地址 |\n"
+              "|------|------|\n"
+              f"| `latest` | `{tag_latest}` |\n"
+              f"| `{version}` | `{tag_versioned}` |\n"
+              "\n"
+              f"*最后构建：{build_time} · 平台：`{platform}` · "
+              f"[查看 Actions](https://github.com/{repo}/actions)*\n"
+              "<!-- LATEST_IMAGE_END -->"
+          )
+
+          content = open('README.md').read()
+          result = re.sub(
+              r'<!-- LATEST_IMAGE_START -->.*?<!-- LATEST_IMAGE_END -->',
+              new_block,
+              content,
+              flags=re.DOTALL
+          )
+          open('README.md', 'w').write(result)
+          print(f'README updated: {tag_versioned}')
+          EOF
+
+      - name: Commit README update
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --staged --quiet || git commit -m "chore: update latest image to ${{ steps.tags.outputs.version }} [skip ci]"
+          git push
 
       - name: Summary
         run: |

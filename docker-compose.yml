@@ -1,6 +1,6 @@
 services:
   wedding:
-    build: .
+    image: registry.cn-shanghai.aliyuncs.com/jihaoyun/wedding_invitation:latest
     container_name: wedding-invitation
     ports:
       - "5000:5000"

@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         - name: wedding
-          image: wedding-invitation:latest   # 替换为你的镜像地址
-          imagePullPolicy: IfNotPresent
+          image: registry.cn-shanghai.aliyuncs.com/jihaoyun/wedding_invitation:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
               protocol: TCP
