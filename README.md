@@ -94,9 +94,9 @@ wedding/
 | 标签 | 镜像地址 |
 |------|------|
 | `latest` | `registry.cn-shanghai.aliyuncs.com/jihaoyun/wedding_invitation:latest` |
-| `69914242` | `registry.cn-shanghai.aliyuncs.com/jihaoyun/wedding_invitation:69914242` |
+| `5f37c222` | `registry.cn-shanghai.aliyuncs.com/jihaoyun/wedding_invitation:5f37c222` |
 
-*最后构建：2026-02-15 14:52 UTC · 平台：`linux/amd64` · [查看 Actions](https://github.com/mycloudai/wedding_invitation/actions)*
+*最后构建：2026-02-15 14:58 UTC · 平台：`linux/amd64` · [查看 Actions](https://github.com/mycloudai/wedding_invitation/actions)*
 <!-- LATEST_IMAGE_END -->
 
 ## 🚀 快速启动
