@@ -79,13 +79,17 @@ function copyMessage() {
     copyText(textarea.value);
 }
 
-function generateInviteMessage(name, url) {
+function generateInviteMessage(name, url, ceremony) {
     var venue = WEDDING_CONFIG.weddingVenue || '';
     var address = WEDDING_CONFIG.weddingAddress || '';
     var location = address ? venue + '\n' + address : venue;
+    var ceremonyLine = ceremony
+        ? '🌿 ' + (WEDDING_CONFIG.ceremonyLabel || '草坪仪式') + '：' + WEDDING_CONFIG.ceremonyTime + '\n'
+        : '';
 
     return '致' + name + '，\n\n' +
         '诚挚邀请您参加' + WEDDING_CONFIG.groomName + ' & ' + WEDDING_CONFIG.brideName + '的婚礼！\n\n' +
+        ceremonyLine +
         '🗓 时间：' + WEDDING_CONFIG.weddingDate + '  ' + WEDDING_CONFIG.banquetTime + '\n' +
         '📍 地点：' + location + '\n\n' +
         '这是为您准备的专属电子邀请函：\n' +
@@ -110,8 +114,8 @@ function copyText(text) {
     }
 }
 
-function copyInviteMessage(name, url) {
-    const message = generateInviteMessage(name, url);
+function copyInviteMessage(name, url, ceremony) {
+    const message = generateInviteMessage(name, url, ceremony);
     copyText(message);
 }
 
@@ -138,7 +142,7 @@ document.getElementById('add-guest-form').addEventListener('submit', async funct
             const resultUrl = document.getElementById('result-url');
             const resultMessage = document.getElementById('result-message');
             resultUrl.value = data.url;
-            resultMessage.value = generateInviteMessage(data.name || name, data.url);
+            resultMessage.value = generateInviteMessage(data.name || name, data.url, data.ceremony || ceremony);
             resultArea.style.display = '';
 
             if (resp.status === 201) {

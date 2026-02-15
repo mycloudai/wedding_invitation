@@ -187,7 +187,7 @@
                             </td>
                             <td class="td-actions">
                                 <a href="{{ url_for('invitation', code=code) }}" target="_blank" class="btn btn-sm btn-primary">打开邀请函</a>
-                                <button class="btn btn-sm btn-accent" onclick="copyInviteMessage('{{ info.name }}', '{{ url_for('invitation', code=code, _external=True) }}')">复制邀请信息</button>
+                                <button class="btn btn-sm btn-accent" onclick="copyInviteMessage('{{ info.name }}', '{{ url_for('invitation', code=code, _external=True) }}', {{ info.get('ceremony', False) | tojson }})">复制邀请信息</button>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown('{{ code }}')">
                                         <span>⋮</span>
@@ -219,7 +219,9 @@
             weddingDate: {{ config.wedding_date | tojson }},
             banquetTime: {{ config.banquet_time | tojson }},
             weddingVenue: {{ config.wedding_venue | tojson }},
-            weddingAddress: {{ config.wedding_address | tojson }}
+            weddingAddress: {{ config.wedding_address | tojson }},
+            ceremonyTime: {{ config.ceremony_time | tojson }},
+            ceremonyLabel: {{ config.ceremony_label | tojson }}
         };
 
         // Pass guests data to JS
