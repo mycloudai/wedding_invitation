@@ -56,26 +56,17 @@ window.toggleDropdown = function(code) {
     }
 }
 
-// Close dropdown when clicking outside
+// Close dropdown when clicking outside or on a dropdown item
 document.addEventListener('click', function(e) {
-    if (!e.target.closest('.dropdown')) {
+    const isInsideDropdown = e.target.closest('.dropdown');
+    const isDropdownItem = e.target.closest('.dropdown-item');
+    if (!isInsideDropdown || isDropdownItem) {
         document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
             menu.classList.remove('show');
         });
     }
 });
 
-// Prevent dropdown from closing when clicking inside
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.dropdown-item')) {
-        // Close the dropdown after action
-        setTimeout(function() {
-            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
-                menu.classList.remove('show');
-            });
-        }, 100);
-    }
-});
 
 // ---------- Copy ----------
 function copyUrl() {
@@ -483,6 +474,13 @@ function showListDialog(type, list) {
     overlay.style.zIndex = '9999';
     overlay.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%">' + html + '</div>';
     document.body.appendChild(overlay);
+
+    // Click outside dialog to close
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            closeGuestDialog();
+        }
+    });
 }
 
 window.closeGuestDialog = function() {
