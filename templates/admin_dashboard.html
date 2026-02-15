@@ -180,7 +180,7 @@
                             </td>
                             <td class="td-views">
                                 {% if info.get('view_count', 0) > 0 %}
-                                <span class="view-badge">{{ info.view_count }}次<br><span class="view-date">{{ info.first_viewed_at[:10] }}</span></span>
+                                <span class="view-badge">{{ info.view_count }}次 · <span class="view-date">{{ info.first_viewed_at[:10] }}</span></span>
                                 {% else %}
                                 <span class="view-badge-none">未查看</span>
                                 {% endif %}
@@ -215,7 +215,11 @@
         // Pass config and data to JS
         const WEDDING_CONFIG = {
             groomName: {{ config.groom_name | tojson }},
-            brideName: {{ config.bride_name | tojson }}
+            brideName: {{ config.bride_name | tojson }},
+            weddingDate: {{ config.wedding_date | tojson }},
+            banquetTime: {{ config.banquet_time | tojson }},
+            weddingVenue: {{ config.wedding_venue | tojson }},
+            weddingAddress: {{ config.wedding_address | tojson }}
         };
 
         // Pass guests data to JS

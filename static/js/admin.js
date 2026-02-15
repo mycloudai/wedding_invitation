@@ -80,8 +80,14 @@ function copyMessage() {
 }
 
 function generateInviteMessage(name, url) {
+    var venue = WEDDING_CONFIG.weddingVenue || '';
+    var address = WEDDING_CONFIG.weddingAddress || '';
+    var location = address ? venue + '\n' + address : venue;
+
     return '致' + name + '，\n\n' +
         '诚挚邀请您参加' + WEDDING_CONFIG.groomName + ' & ' + WEDDING_CONFIG.brideName + '的婚礼！\n\n' +
+        '🗓 时间：' + WEDDING_CONFIG.weddingDate + '  ' + WEDDING_CONFIG.banquetTime + '\n' +
+        '📍 地点：' + location + '\n\n' +
         '这是为您准备的专属电子邀请函：\n' +
         url + '\n\n' +
         '❗️ 请在邀请函最后部份填写您是否出席以及出席人数，\n' +

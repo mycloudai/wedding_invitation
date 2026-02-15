@@ -1131,29 +1131,3 @@ body.no-scroll {
     color: var(--color-accent-light);
 }
 
-/* ---------- Calendar Link ---------- */
-.calendar-row {
-    margin: 28px 0 8px;
-    text-align: center;
-}
-
-.calendar-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--color-text-light);
-    text-decoration: none;
-    letter-spacing: 1px;
-    padding: 6px 16px;
-    border: 1px solid var(--color-accent-light);
-    border-radius: 20px;
-    transition: border-color 0.2s, color 0.2s;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.calendar-link:hover,
-.calendar-link:active {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-}
